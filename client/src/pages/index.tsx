@@ -12,12 +12,11 @@ import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 import { Global } from '@emotion/react';
-import { styled, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
-import { Button } from '@mui/material'
 // import Counter from './Counter'
 
 const drawerBleeding = 56;
@@ -121,7 +120,7 @@ const Home: NextPage = () => {
           }}
         >
           <Puller />
-          <Typography sx={{ p: 2, color: 'text.primary' }}>x objects, y morphisms</Typography>
+          <Typography sx={{ p: 2, color: 'text.secondary' }}>51 results</Typography>
         </StyledBox>
         <StyledBox
           sx={{
@@ -131,77 +130,11 @@ const Home: NextPage = () => {
             overflow: 'auto',
           }}
         >
-          <button>Increment</button>
-          {12}
-          <button>Decrement</button>
-          {/* <Counter /> */}
+          <Skeleton variant="rectangular" height="100%" />
         </StyledBox>
       </SwipeableDrawer>
     </Root>
   );
 }
-
-
-//     <Root>
-//       <CssBaseline />
-//       <Global
-//         styles={{
-//           '.MuiDrawer-root > .MuiPaper-root': {
-//             height: `calc(50% - ${drawerBleeding}px)`,
-//             overflow: 'visible',
-//           },
-//         }}
-//       />
-
-//       <SwipeableDrawer
-//         // container={container}
-//         anchor="bottom"
-//         open={open}
-//         onClose={toggleDrawer(false)}
-//         onOpen={toggleDrawer(true)}
-//         swipeAreaWidth={drawerBleeding}
-//         disableSwipeToOpen={false}
-//         ModalProps={{
-//           keepMounted: true,
-//         }}
-
-//         onClick={(e) => {
-//           e.preventDefault()
-//           toggleDrawer(!open)
-//         }}
-//       >
-
-//         <StyledBox
-//           sx={{
-//             position: 'absolute',
-//             top: -drawerBleeding,
-//             borderTopLeftRadius: 8,
-//             borderTopRightRadius: 8,
-//             visibility: 'visible',
-//             right: 0,
-//             left: 0,
-//           }}
-//         >
-//           <Puller />
-//           <Typography sx={{ p: 2, color: 'text.primary' }}>x objects, y morphisms</Typography>
-//         </StyledBox>
-//         <StyledBox
-//           sx={{
-//             px: 2,
-//             pb: 2,
-//             height: '100%',
-//             overflow: 'auto',
-//           }}
-//         >
-//           {/* <button>Increment</button>
-//         {12}
-//         <button>Decrement</button> */}
-//           {/* <Counter /> */}
-//         </StyledBox>
-//       </SwipeableDrawer>
-//     </Root>
-//   </div>
-
-
 
 export default Home
