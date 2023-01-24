@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build:wasm": "wasm-pack build wasm --release --target web",
-    "build": "next build",
+    "build": "npm run build:wasm && next build",
     "start": "next start",
     "lint": "next lint",
     "cp": "cypress open"
