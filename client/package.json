@@ -1,0 +1,32 @@
+{
+  "name": "nextjs-wasm",
+  "version": "1.4.0",
+  "scripts": {
+    "dev": "next dev",
+    "build:wasm": "wasm-pack build wasm --release --target web",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "cp": "cypress open"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.11.3",
+    "next": "13.0.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-force-graph-3d": "^1.21.17",
+    "wasm": "file:wasm/pkg"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.9",
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.9",
+    "cypress": "^12.3.0",
+    "eslint": "8.28.0",
+    "eslint-config-next": "13.0.5",
+    "typescript": "4.9.3",
+    "wasm-pack": "0.10.3"
+  }
+}
