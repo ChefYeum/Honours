@@ -15,9 +15,10 @@ import { Global } from '@emotion/react';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
-import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import Counter from './Counter'
+import Table from './Table'
+import { Button } from '@mui/material'
 // import Counter from './Counter'
 
 const drawerBleeding = 56;
@@ -121,7 +122,7 @@ const Home: NextPage = () => {
           }}
         >
           <Puller />
-          <Typography sx={{ p: 2, color: 'text.secondary' }}>51 results</Typography>
+          <Typography sx={{ p: 2, color: 'white' }}>51 results</Typography>
         </StyledBox>
         <StyledBox
           sx={{
@@ -132,7 +133,11 @@ const Home: NextPage = () => {
           }}
         >
           <Counter />
+          <Table />
         </StyledBox>
+        <Button variant="contained" onClick={() => {
+          console.log('Verify!')
+        }}>Verify</Button>
       </SwipeableDrawer>
     </Root>
   );

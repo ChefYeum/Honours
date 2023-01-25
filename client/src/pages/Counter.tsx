@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup } from "@mui/material";
+import { Box, Button, ButtonGroup, colors } from "@mui/material";
 import { useState } from "react";
 
 function Counter() {
@@ -17,7 +17,10 @@ function Counter() {
   return (
     <div style={{
       textAlign: 'center',
-      height: '4em'
+      height: '4em',
+      color: 'white',
+      paddingTop: '0.5em',
+      paddingBottom: '0.5em',
     }}>
       <ButtonGroup
         // variant="outlined"
@@ -26,7 +29,9 @@ function Counter() {
         <Button style={{ width: third }} onClick={handleDecrement}>-</Button>
         <Box
           component="span"
-          sx={{ width: third }}>
+          sx={{ width: third }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
           {counter}
         </Box>
         <Button style={{ width: third }} onClick={handleIncrement}>+</Button>
