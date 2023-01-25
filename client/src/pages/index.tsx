@@ -18,7 +18,7 @@ import { grey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import Counter from './Counter'
 import Table from './Table'
-import { Button } from '@mui/material'
+import { Button, Fab } from '@mui/material'
 // import Counter from './Counter'
 
 const drawerBleeding = 56;
@@ -32,15 +32,15 @@ const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: grey[800],
 }));
 
-const Puller = styled(Box)(({ theme }) => ({
-  width: 30,
-  height: 6,
-  backgroundColor: grey[900],
-  borderRadius: 3,
-  position: 'absolute',
-  top: 8,
-  left: 'calc(50% - 15px)',
-}));
+// const Puller = styled(Box)(({ theme }) => ({
+//   width: 30,
+//   height: 6,
+//   backgroundColor: grey[900],
+//   borderRadius: 3,
+//   position: 'absolute',
+//   top: 8,
+//   left: 'calc(50% - 15px)',
+// }));
 
 // Import without SSR:
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), {
@@ -87,11 +87,23 @@ const Home: NextPage = () => {
       <Global
         styles={{
           '.MuiDrawer-root > .MuiPaper-root': {
-            height: `calc(50% - ${drawerBleeding}px)`,
-            overflow: 'visible',
+            // overflow: 'visible',
           },
         }}
       />
+      <Fab
+        variant="extended"
+        onClick={toggleDrawer(true)}
+        style={{
+          margin: 0,
+          top: 'auto',
+          right: 18,
+          bottom: 72,
+          left: 'auto',
+          position: 'fixed',
+        }}>
+        Edit
+      </Fab>
       <ForceGraph3D
         graphData={model}
         linkDirectionalArrowLength={3.5}
@@ -100,7 +112,7 @@ const Home: NextPage = () => {
       />
       <SwipeableDrawer
         // container={container}
-        anchor="bottom"
+        anchor="right"
         open={open}
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
@@ -113,16 +125,16 @@ const Home: NextPage = () => {
         <StyledBox
           sx={{
             position: 'absolute',
-            top: -drawerBleeding,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
+            // top: -drawerBleeding,
+            // borderTopLeftRadius: 8,
+            // borderTopRightRadius: 8,
             visibility: 'visible',
             right: 0,
             left: 0,
           }}
+          
         >
-          <Puller />
-          <Typography sx={{ p: 2, color: 'white' }}>51 results</Typography>
+          {/* <Puller /> */}
         </StyledBox>
         <StyledBox
           sx={{
@@ -130,6 +142,7 @@ const Home: NextPage = () => {
             pb: 2,
             height: '100%',
             overflow: 'auto',
+            width: 960,
           }}
         >
           <Counter />
