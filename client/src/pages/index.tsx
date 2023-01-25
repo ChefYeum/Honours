@@ -15,11 +15,10 @@ import { Global } from '@emotion/react';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
-import Typography from '@mui/material/Typography';
 import Counter from './Counter'
 import Table from './Table'
 import { Button, Fab } from '@mui/material'
-// import Counter from './Counter'
+import EditIcon from '@mui/icons-material/Edit';
 
 const drawerBleeding = 56;
 
@@ -96,13 +95,23 @@ const Home: NextPage = () => {
         onClick={toggleDrawer(true)}
         style={{
           margin: 0,
-          top: 'auto',
-          right: 18,
-          bottom: 72,
-          left: 'auto',
           position: 'fixed',
+
+          // Size
+          width: 96,
+          height: 96,
+
+          top: 'auto',
+          right: 72,
+          bottom: 72,
+          left: 'auto', 
+
+          // Roundness
+          borderRadius: '50%',
         }}>
-        Edit
+          <EditIcon sx={{
+
+          }}/>
       </Fab>
       <ForceGraph3D
         graphData={model}
