@@ -17,6 +17,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
+import Counter from './Counter'
 // import Counter from './Counter'
 
 const drawerBleeding = 56;
@@ -130,7 +131,7 @@ const Home: NextPage = () => {
             overflow: 'auto',
           }}
         >
-          <Skeleton variant="rectangular" height="100%" />
+          <Counter />
         </StyledBox>
       </SwipeableDrawer>
     </Root>

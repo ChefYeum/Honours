@@ -1,4 +1,4 @@
-import { Button, ButtonGroup } from "@mui/material";
+import { Box, Button, ButtonGroup } from "@mui/material";
 import { useState } from "react";
 
 function Counter() {
@@ -12,21 +12,25 @@ function Counter() {
     updateCounter(counter <= 0 ? 0 : counter - 1);
   }
 
-  function handleReset() {
-    updateCounter(0);
-  }
+  const third = 'calc(100% / 3)'
 
   return (
     <div style={{
       textAlign: 'center',
+      height: '4em'
     }}>
-      <span>
-        <ButtonGroup variant="outlined" aria-label="outlined button group">
-          <Button onClick={handleDecrement}>-</Button>
-          <Button disabled={true}>{counter}</Button>
-          <Button onClick={handleIncrement}>+</Button>
-        </ButtonGroup>
-      </span>
+      <ButtonGroup
+        // variant="outlined"
+        // aria-label="outlined button group"
+        fullWidth={true} style={{ height: '100%' }}>
+        <Button style={{ width: third }} onClick={handleDecrement}>-</Button>
+        <Box
+          component="span"
+          sx={{ width: third }}>
+          {counter}
+        </Box>
+        <Button style={{ width: third }} onClick={handleIncrement}>+</Button>
+      </ButtonGroup>
     </div>
   );
 }
