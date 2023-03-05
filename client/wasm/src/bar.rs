@@ -1,55 +1,54 @@
-use wasm_bindgen::prelude::*;
+use serde::{Deserialize, Serialize};
+use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
-// #[wasm_bindgen]
-// #[derive(Debug, PartialEq)]
-// pub struct Node {
-//     id: u32,
-// }
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Node {
+    id: u32,
+}
 
-// #[wasm_bindgen]
-// #[derive(Debug, PartialEq)]
-// pub struct Link {
-//     source: u32,
-//     target: u32,
-// }
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Link {
+    source: u32,
+    target: u32,
+}
 
-// Define DiMultGraph which has list of Nodes and list of Links
-// Node is denoted by a number and a Link is a mapping from a Node to a Node
-#[wasm_bindgen]
-// #[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct DiMultGraph {
-    // nodes: Vec<Node>,
-    // links: Vec<Link>,
-    ints: Vec<u32>,
+    nodes: Vec<Node>,
+    links: Vec<Link>,
+}
+
+impl DiMultGraph {
+    pub fn new(val: u32) -> DiMultGraph {
+        DiMultGraph {
+            nodes: vec![Node { id: val }],
+            links: vec![],
+        }
+    }
+
+    // pub fn get(&self) -> Vec<u32> {
+    //     self.ints.clone()
+    // }
 }
 
 #[wasm_bindgen]
-impl DiMultGraph {
-    #[wasm_bindgen(constructor)]
-    // pub fn new(nodes: Vec<Node>, links: Vec<Link>) -> DiMultGraph {
-    pub fn new(val: u32) -> DiMultGraph {
-        // DiMultGraph { nodes, links }
-        DiMultGraph { ints: vec![val] }
-    }
+pub fn process_js_input(val: JsValue) -> JsValue {
+    let g: DiMultGraph = serde_wasm_bindgen::from_value(val).unwrap();
 
-    pub fn get(&self) -> Vec<u32> {
-        self.ints.clone()
-    }
+    // do stuff with g
+    // let pass = check_identity(g) ? "yay" : "nay";
+    let _pass = if check_identity(g) { "yay" } else { "nay" };
+    serde_wasm_bindgen::to_value("yay").unwrap()
 }
 
+pub fn check_identity(g: DiMultGraph) -> bool {
+    // let nodes = g.nodes.iter().map(|n| n.id);
+    let nodes: Vec<Node> = g.nodes;
+    let mut id_morphs = g
+        .links
+        .iter()
+        .filter(|l| l.source == l.target)
+        .map(|l| l.source);
 
-
-
-// #[wasm_bindgen]
-// pub fn check_identity(g: DiMultGraph) -> bool {
-//     // let nodes = g.nodes.iter().map(|n| n.id);
-//     let nodes: Vec<Node> = g.nodes.iter().cloned().collect();
-//     let mut id_morphs = g
-//         .links
-//         .iter()
-//         .filter(|l| l.source == l.target)
-//         .map(|l| l.source);
-
-//     return nodes.iter().all(|n| id_morphs.any(|morph| morph == n.id));
-// }
+    return nodes.iter().all(|n| id_morphs.any(|morph| morph == n.id));
+}
