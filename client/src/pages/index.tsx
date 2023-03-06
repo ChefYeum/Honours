@@ -20,6 +20,8 @@ import Table from './Table'
 import { Button, Fab } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
+import { DiMultGraph, init_model } from '../../wasm/pkg'
+
 const drawerBleeding = 56;
 
 const Root = styled('div')(({ theme }) => ({
@@ -104,14 +106,14 @@ const Home: NextPage = () => {
           top: 'auto',
           right: 72,
           bottom: 72,
-          left: 'auto', 
+          left: 'auto',
 
           // Roundness
           borderRadius: '50%',
         }}>
-          <EditIcon sx={{
+        <EditIcon sx={{
 
-          }}/>
+        }} />
       </Fab>
       <ForceGraph3D
         graphData={model}
@@ -141,7 +143,7 @@ const Home: NextPage = () => {
             right: 0,
             left: 0,
           }}
-          
+
         >
           {/* <Puller /> */}
         </StyledBox>
@@ -158,7 +160,11 @@ const Home: NextPage = () => {
           <Table />
         </StyledBox>
         <Button variant="contained" onClick={() => {
-          console.log('Verify!')
+          // Get the example object from wasm.
+          let model = init_model();
+          console.log(model.node_count);
+          // let n = model.get_node_count();
+          // console.log(n);
         }}>Verify</Button>
       </SwipeableDrawer>
     </Root>
