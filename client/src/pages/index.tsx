@@ -20,7 +20,7 @@ import Table from './Table'
 import { Button, Fab } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
-import { DiMultGraph, init_model } from '../../wasm/pkg'
+import init, { DiMultGraph, init_model } from '../../wasm/pkg'
 
 const drawerBleeding = 56;
 
@@ -65,7 +65,17 @@ const Home: NextPage = () => {
   const [open, setOpen] = useState(false);
   const [model, setModel] = useState(c3);
 
-  const ctx = useContext(WASMContext)
+  useEffect(() => {
+    init().then(() => {
+      // Get the example object from wasm.
+      let model = init_model(5);
+      model.node_count += 1;
+      model.node_count += 10;
+
+      console.log(model);
+    })
+  }, []);
+
 
   useEffect(() => {
     const output = C.checkIdMorphForAllObj(nc1) // True
@@ -160,11 +170,7 @@ const Home: NextPage = () => {
           <Table />
         </StyledBox>
         <Button variant="contained" onClick={() => {
-          // Get the example object from wasm.
-          let model = init_model();
-          console.log(model.node_count);
-          // let n = model.get_node_count();
-          // console.log(n);
+          // Do nothing? 
         }}>Verify</Button>
       </SwipeableDrawer>
     </Root>

@@ -16,9 +16,10 @@ pub struct DiMultGraph {
 
 #[wasm_bindgen]
 impl DiMultGraph {
-    pub fn new() -> DiMultGraph {
+    #[wasm_bindgen(constructor)]
+    pub fn new(node_count: u32) -> DiMultGraph {
         DiMultGraph {
-            node_count: 0,
+            node_count: node_count,
             links: vec![],
         }
     }
@@ -28,8 +29,13 @@ impl DiMultGraph {
         self.node_count
     }
 
-    // pub fn add_node(&mut self) {
-    //     self.node_count += 1;
+    pub fn add_node(&mut self) {
+        self.node_count += 1;
+    }
+
+    // #[wasm_bindgen(setter)]
+    // pub fn set_node_count(&mut self, node_count: u32) {
+    //     self.node_count = node_count;
     // }
 
     // pub fn add_link(&mut self, source: u32, target: u32) {
@@ -63,8 +69,8 @@ pub fn check_identity(g: DiMultGraph) -> Result<(), i32> {
 // }
 
 #[wasm_bindgen]
-pub fn init_model() -> Result<JsValue, JsValue> {
-    let g = DiMultGraph::new();
+pub fn init_model(node_count: u32) -> Result<JsValue, JsValue> {
+    let g = DiMultGraph::new(node_count);
     Ok(serde_wasm_bindgen::to_value(&g)?)
 }
 

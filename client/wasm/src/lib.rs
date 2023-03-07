@@ -21,8 +21,8 @@ mod test_bar {
 
     #[test]
     fn test_new() {
-        let g = DiMultGraph::new();
-        assert_eq!(g, DiMultGraph::new());
+        let g = DiMultGraph::new(0);
+        assert_eq!(g, DiMultGraph::new(0));
     }
 
     // #[test]
