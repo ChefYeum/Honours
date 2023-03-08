@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
+use gloo_utils::format::JsValueSerdeExt;
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug)]
 pub enum InvalidCategory {
@@ -19,9 +20,8 @@ pub struct DiMultGraph {
     links: Vec<Link>,
 }
 
-#[wasm_bindgen]
+// #[wasm_bindgen]
 impl DiMultGraph {
-    #[wasm_bindgen(constructor)]
     pub fn new(node_count: usize) -> DiMultGraph {
         DiMultGraph {
             node_count: node_count,
@@ -29,21 +29,10 @@ impl DiMultGraph {
         }
     }
 
-    #[wasm_bindgen(getter)]
     pub fn node_count(&self) -> usize {
         self.node_count
     }
 
-    pub fn add_node(&mut self) {
-        self.node_count += 1;
-    }
-
-    pub fn add_link(&mut self, source: usize, target: usize) {
-        self.links.push(Link {
-            source: source,
-            target: target,
-        });
-    }
 }
 
 pub fn check_identity(g: DiMultGraph) -> Result<(), InvalidCategory> {
@@ -69,27 +58,12 @@ pub fn check_identity(g: DiMultGraph) -> Result<(), InvalidCategory> {
     })
 }
 
-// #[wasm_bindgen]
-// pub fn process_js_input(val: JsValue) -> JsValue {
-//     let g: DiMultGraph = serde_wasm_bindgen::from_value(val).unwrap();
-
-//     // do stuff with g
-//     // let pass = check_identity(g) ? "yay" : "nay";
-//     // let _pass = check_identity(g);
-
-//     serde_wasm_bindgen::to_value(&check_identity(g)).unwrap()
-//     // serde_wasm_bindgen::to_value(g).unwrap()
-// }
-
-#[wasm_bindgen]
-pub fn init_model(node_count: usize) -> Result<JsValue, JsValue> {
-    let g = DiMultGraph::new(node_count);
-    Ok(serde_wasm_bindgen::to_value(&g)?)
+fn op_err_to_js_err(e: InvalidCategory) -> JsValue {
+    JsValue::from_str(&format!("{:?}", e))
 }
 
 #[wasm_bindgen]
-pub fn check_model(val: JsValue) -> Result<(), JsValue> {
-    let g: DiMultGraph = serde_wasm_bindgen::from_value(val).unwrap();
-    check_identity(g).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
-    Ok(())
+pub fn check_json_model(val: JsValue) -> Result<(), JsValue> {
+    let g: DiMultGraph = val.into_serde().unwrap();
+    check_identity(g).map_err(op_err_to_js_err)
 }

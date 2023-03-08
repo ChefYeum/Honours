@@ -20,7 +20,7 @@ import Table from './Table'
 import { Button, Fab } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
-import init, { check_model, init_model } from '../../wasm/pkg'
+import init, { check_json_model } from '../../wasm/pkg'
 
 const drawerBleeding = 56;
 
@@ -68,13 +68,23 @@ const Home: NextPage = () => {
   useEffect(() => {
     init().then(() => {
       // Get the example object from wasm.
-      let model = init_model(5);
-      model.node_count += 123-5;
+      // let model = init_model(5);
+      // model.node_count += 123 - 5;
 
       // model.add_node();
       // model.add_link();
       // model.add_node();
-      let output = check_model(model);
+
+      let output = check_json_model({
+        node_count: 5,
+        links: [{
+          source: 1,
+          target: 1
+        }, {
+          source: 2,
+          target: 2
+        }]
+      });
       console.log(output);
     })
   }, []);
