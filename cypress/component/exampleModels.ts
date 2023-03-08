@@ -1,28 +1,21 @@
-import { DiMultGraph } from "../../src/Category";
+import { DiMultGraph } from "../../src/DiMultGraph";
 
-// const c0: DiMultGraph = {
-//   nodes: [
-//     { id: 0 },
-//     { id: 1 },
-//     { id: 2 },
-//   ],
-//   links: [
-//     { source: 0, target: 0 },
-//     { source: 1, target: 1 },
-//     { source: 2, target: 2 },
-//     { source: 0, target: 1 },
-//     { source: 0, target: 1 },
-//     { source: 1, target: 2 },
-//     { source: 0, target: 2 },
-//     { source: 0, target: 2 },
-//   ]
-// }
+export const c0: DiMultGraph = {
+  node_count: 3,
+  links: [
+    { source: 0, target: 0 },
+    { source: 1, target: 1 },
+    { source: 2, target: 2 },
+    { source: 0, target: 1 },
+    { source: 0, target: 1 },
+    { source: 1, target: 2 },
+    { source: 0, target: 2 },
+    { source: 0, target: 2 },
+  ]
+}
+
 export const c1: DiMultGraph = {
-  nodes: [
-    { id: 0 },
-    { id: 1 },
-    { id: 2 },
-  ],
+  node_count: 3,
   links: [
     { source: 0, target: 0 },
     { source: 1, target: 1 },
@@ -37,11 +30,7 @@ export const c1: DiMultGraph = {
 
 // Non category; Same as c1 but without identity on node 0.
 export const nc1: DiMultGraph = {
-  nodes: [
-    { id: 0 },
-    { id: 1 },
-    { id: 2 },
-  ],
+  node_count: 3,
   links: [
     // { source: 0, target: 0 },
     { source: 1, target: 1 },
@@ -55,11 +44,7 @@ export const nc1: DiMultGraph = {
 };
 
 export const c2: DiMultGraph = {
-  nodes: [
-    { id: 0 },
-    { id: 1 },
-    { id: 2 },
-  ],
+  node_count: 3,
   links: [
     { source: 0, target: 0 },
     { source: 1, target: 1 },
@@ -71,12 +56,7 @@ export const c2: DiMultGraph = {
   ]
 };
 export const c3: DiMultGraph = {
-  nodes: [
-    { id: 0 },
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-  ],
+  node_count: 4,
   links: [
     { source: 0, target: 0 },
     { source: 1, target: 1 },

@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 
 import { useContext } from "react"
 import { WASMContext } from "../context/WASM"
-import * as C from '../Category'
 import { nc1, c3 } from '../../cypress/component/exampleModels'
 
 // MUI:
@@ -50,7 +49,7 @@ const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), {
 
 function genRandomTree(N = 50) {
   return {
-    nodes: Array.from(Array(N).keys()).map(i => ({ id: i })),
+    nodes: Array.from(Array(N).keys()),
     links: Array.from(Array(N).keys())
       .filter(id => id)
       .map(id => ({
@@ -89,12 +88,6 @@ const Home: NextPage = () => {
     })
   }, []);
 
-
-  useEffect(() => {
-    const output = C.checkIdMorphForAllObj(nc1) // True
-    // const output = C.getMorphMap(c3)
-    console.log(output)
-  }, []);
 
   // if (!ctx.wasm) {
   //   return <>...</>
@@ -139,7 +132,16 @@ const Home: NextPage = () => {
         }} />
       </Fab>
       <ForceGraph3D
-        graphData={model}
+        graphData={
+          // model but map node_count to nodes which is what the graph expects.
+          {
+            nodes: Array.from(Array(model.node_count).keys()
+            ).map((id) => ({
+              id: id
+            })),
+            links: model.links
+          }
+        }
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1}
         linkCurvature={0.25}
