@@ -20,7 +20,7 @@ import Table from './Table'
 import { Button, Fab } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
-import init, { DiMultGraph, init_model } from '../../wasm/pkg'
+import init, { check_model, init_model } from '../../wasm/pkg'
 
 const drawerBleeding = 56;
 
@@ -69,10 +69,13 @@ const Home: NextPage = () => {
     init().then(() => {
       // Get the example object from wasm.
       let model = init_model(5);
-      model.node_count += 1;
-      model.node_count += 10;
+      model.node_count += 123-5;
 
-      console.log(model);
+      // model.add_node();
+      // model.add_link();
+      // model.add_node();
+      let output = check_model(model);
+      console.log(output);
     })
   }, []);
 
@@ -83,9 +86,9 @@ const Home: NextPage = () => {
     console.log(output)
   }, []);
 
-  if (!ctx.wasm) {
-    return <>...</>
-  }
+  // if (!ctx.wasm) {
+  //   return <>...</>
+  // }
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);

@@ -1,23 +1,28 @@
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
+#[derive(Debug)]
+pub enum InvalidCategory {
+    NoIdentity(usize),
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Link {
-    source: u32,
-    target: u32,
+    source: usize,
+    target: usize,
 }
 
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct DiMultGraph {
-    node_count: u32,
+    node_count: usize,
     links: Vec<Link>,
 }
 
 #[wasm_bindgen]
 impl DiMultGraph {
     #[wasm_bindgen(constructor)]
-    pub fn new(node_count: u32) -> DiMultGraph {
+    pub fn new(node_count: usize) -> DiMultGraph {
         DiMultGraph {
             node_count: node_count,
             links: vec![],
@@ -25,7 +30,7 @@ impl DiMultGraph {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn node_count(&self) -> u32 {
+    pub fn node_count(&self) -> usize {
         self.node_count
     }
 
@@ -33,27 +38,35 @@ impl DiMultGraph {
         self.node_count += 1;
     }
 
-    // #[wasm_bindgen(setter)]
-    // pub fn set_node_count(&mut self, node_count: u32) {
-    //     self.node_count = node_count;
-    // }
-
-    // pub fn add_link(&mut self, source: u32, target: u32) {
-    //     self.links.push(Link { source, target });
-    // }
+    pub fn add_link(&mut self, source: usize, target: usize) {
+        self.links.push(Link {
+            source: source,
+            target: target,
+        });
+    }
 }
 
-pub fn check_identity(g: DiMultGraph) -> Result<(), i32> {
-    // let nodes = g.nodes.iter().map(|n| n.id);
+pub fn check_identity(g: DiMultGraph) -> Result<(), InvalidCategory> {
     let mut id_morphs = g
         .links
         .iter()
         .filter(|l| l.source == l.target)
         .map(|l| l.source);
 
-    if (1..=g.node_count)
-        .into_iter()
-        .all(|n| id_morphs.any(|morph| morph == n)) { Ok(()) } else { Err(1) }
+    // if (1..=g.node_count)
+    //     .into_iter()
+    //     .all(|n| id_morphs.any(|morph| morph == n))
+    // {
+    //     Ok()
+    // } else {
+    //     Err(InvalidCategory::NoIdentity(0))
+    // }
+    // Write a version where we print the node that is missing an identity morphism
+    Ok(for n in 1..=g.node_count {
+        if !id_morphs.any(|morph| morph == n) {
+            return Err(InvalidCategory::NoIdentity(n as usize));
+        }
+    })
 }
 
 // #[wasm_bindgen]
@@ -69,7 +82,7 @@ pub fn check_identity(g: DiMultGraph) -> Result<(), i32> {
 // }
 
 #[wasm_bindgen]
-pub fn init_model(node_count: u32) -> Result<JsValue, JsValue> {
+pub fn init_model(node_count: usize) -> Result<JsValue, JsValue> {
     let g = DiMultGraph::new(node_count);
     Ok(serde_wasm_bindgen::to_value(&g)?)
 }
@@ -77,7 +90,6 @@ pub fn init_model(node_count: u32) -> Result<JsValue, JsValue> {
 #[wasm_bindgen]
 pub fn check_model(val: JsValue) -> Result<(), JsValue> {
     let g: DiMultGraph = serde_wasm_bindgen::from_value(val).unwrap();
-    // check_identity(g).or_else(|e| Err(JsValue::from(e)))?
-    check_identity(g)?;
+    check_identity(g).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
     Ok(())
 }
