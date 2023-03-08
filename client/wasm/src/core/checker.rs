@@ -1,11 +1,4 @@
-use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
-use gloo_utils::format::JsValueSerdeExt;
-use crate::graph::DiMultGraph;
-
-#[derive(Debug)]
-pub enum InvalidCategory {
-    NoIdentity(usize),
-}
+use super::{graph::DiMultGraph, errors::InvalidCategory};
 
 pub fn check_identity(g: DiMultGraph) -> Result<(), InvalidCategory> {
     let mut id_morphs = g
@@ -28,14 +21,4 @@ pub fn check_identity(g: DiMultGraph) -> Result<(), InvalidCategory> {
             return Err(InvalidCategory::NoIdentity(n as usize));
         }
     })
-}
-
-fn op_err_to_js_err(e: InvalidCategory) -> JsValue {
-    JsValue::from_str(&format!("{:?}", e))
-}
-
-#[wasm_bindgen]
-pub fn check_json_model(val: JsValue) -> Result<(), JsValue> {
-    let g: DiMultGraph = val.into_serde().unwrap();
-    check_identity(g).map_err(op_err_to_js_err)
 }
