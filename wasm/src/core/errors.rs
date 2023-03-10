@@ -1,3 +1,5 @@
+// use super::graph::Link;
+
 #[derive(Debug)]
 pub enum EndoCheckFail {
     NoEndo(usize),
@@ -6,6 +8,6 @@ pub enum EndoCheckFail {
 
 
 pub enum IDCheckFail {
-    LeftIDFail(usize),
-    RightIDFail(usize),
+    // LeftIDFail(&'a Link),
+    // RightIDFail(&'a Link),
 }
