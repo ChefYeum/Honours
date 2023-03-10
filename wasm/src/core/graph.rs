@@ -3,12 +3,23 @@ use serde::{Serialize, Deserialize};
 // type LinkID = usize;
 // type NodeID = usize;
 
-// #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
-// pub struct Link {
-//     pub source: usize,
-//     pub target: usize,
-//     pub id: usize
-// }
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Link {
+    pub source: usize,
+    pub target: usize,
+}
+
+
+// Map ID to Link
+pub struct LinkMap {
+    pub links: Box<[Link]>
+}
+
+impl LinkMap {
+    pub fn get_link(&self, id: usize) -> &Link {
+        &self.links[id]
+    }
+}
 
 // #[derive(Debug, PartialEq, Serialize, Deserialize)]
 // pub struct DiMultGraph {
@@ -53,13 +64,12 @@ use serde::{Serialize, Deserialize};
 //     pub table: Vec<&'a Vec<&'a Link>>
 // }
 
-// impl CompositionTable<'_> {
-//     pub fn get_composition(&self, a: &Link, b: &Link) -> &Link{
-//         self.table[a][b]
-//     }
-// }
+pub struct CompositionTable<'a>{
+    pub table: Box<[Box<[&'a Link]>]>
+}
 
-// pub struct GraphWithComp<'a> {
-//     pub graph: DiMultGraph,
-//     pub compTable: CompositionTable<'a>,
-// }
+impl CompositionTable <'_> {
+    pub fn get_composition(&self, a: &Link, b: &Link) -> &Link{
+        &self.table[a.source][b.target]
+    }
+}
