@@ -28,6 +28,23 @@ describe('trivial', () => {
 
 describe('given examples', () => {
     it('c0', () => {
+        // TOOD: 4 solutions
         expect(() => check_json_model(c0)).to.not.throw()
     })
+
+    it('nc1', () => {
+        expect(() => check_json_model(c1)).to.throw()
+    })
+
+    it('c2', () => {
+        expect(() => check_json_model(c2)).to.not.throw()
+    })
+
+    it('c3', () => {
+        expect(() => check_json_model(c3)).to.not.throw()
+    })
+
+    // it('c4', () => {
+    //     expect(() => check_json_model(c4)).to.throw()
+    // })
 })

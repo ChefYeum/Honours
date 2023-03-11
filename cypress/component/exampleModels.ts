@@ -14,6 +14,7 @@ export const c0: DiMultGraph = {
   ]
 }
 
+// 4 solutions
 export const c1: DiMultGraph = {
   node_count: 3,
   links: [
@@ -43,6 +44,7 @@ export const nc1: DiMultGraph = {
   ]
 };
 
+// No solution
 export const c2: DiMultGraph = {
   node_count: 3,
   links: [
@@ -55,6 +57,7 @@ export const c2: DiMultGraph = {
     { source: 1, target: 2 }, // f6
   ]
 };
+
 export const c3: DiMultGraph = {
   node_count: 4,
   links: [
