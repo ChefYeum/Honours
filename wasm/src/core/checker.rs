@@ -1,7 +1,10 @@
-use super::graph::CompositionTable;
+use super::{graph::CompositionTable, errors::CheckerError};
 
-pub fn check_nothing(comp_table: CompositionTable) -> Result<(), ()>{
-    Err(())
+pub fn check_nothing(comp_table: CompositionTable) -> Result<(), CheckerError>{
+    Err(CheckerError::DummyError)
 }
 
-// pub fn get_endomorphisms(comp_table: &CompositionTable) 
+pub fn check_composition(comp_table: &CompositionTable) -> Result<(), CheckerError> {
+    
+    Err(CheckerError::DummyError)
+}
