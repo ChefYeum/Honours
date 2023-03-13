@@ -3,7 +3,7 @@
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 use gloo_utils::format::JsValueSerdeExt;
 
-use self::{graph::CompositionTable, checker::check_nothing, errors::CheckerError};
+use self::{graph::CompositionTable, errors::CheckerError, checker::check_size};
 
 pub mod checker;
 pub mod graph;
@@ -16,5 +16,5 @@ fn op_err_to_js_err(e: CheckerError) -> JsValue {
 #[wasm_bindgen]
 pub fn check_json_model(val: JsValue) -> Result<(), JsValue> {
     let m: CompositionTable = val.into_serde().unwrap();
-    check_nothing(m).map_err(op_err_to_js_err)
+    check_size(&m).map_err(op_err_to_js_err)
 }

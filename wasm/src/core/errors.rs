@@ -18,4 +18,5 @@ use serde::Serialize;
 pub enum CheckerError {
     DummyError,
     ArbitraryError(String),
+    TableSizeError
 }

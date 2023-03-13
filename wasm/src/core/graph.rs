@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct CompositionTable {
-    table: Box<[Box<[usize]>]>,
+    pub table: Box<[Box<[usize]>]>,
     // table: Box<Link>
 }
 
