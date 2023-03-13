@@ -12,11 +12,10 @@
 //     // RightIDFail(&'a Link),
 // }
 
-use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub enum CheckerError {
-    DummyError,
-    ArbitraryError(String),
+    // DummyError,
+    // ArbitraryError(String),
     TableSizeError
 }
