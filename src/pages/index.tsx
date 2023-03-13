@@ -74,17 +74,14 @@ const Home: NextPage = () => {
       // model.add_link();
       // model.add_node();
 
-      try {
-        let output = check_json_model({
+      let output = check_json_model({
           "table": [
             [0, 1],
+            [1, 0],
             [1, 0]
           ]
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      
+        })
+      console.log(output);
     })
   }, []);
 

@@ -20,3 +20,10 @@ pub fn check_composition(comp_table: &CompositionTable) -> Result<(), CheckerErr
     let n = comp_table.table.len();
     Ok(())
 }
+
+
+pub fn check_all(comp_table: &CompositionTable) -> Result<(), CheckerError> {
+    check_size(comp_table)?;
+    check_composition(comp_table)?;
+    Ok(())
+}
