@@ -74,13 +74,38 @@ const Home: NextPage = () => {
       // model.add_link();
       // model.add_node();
 
-      let output = check_json_model({
-          "table": [
-            [0, 1],
-            [1, 0],
-            [1, 0]
-          ]
-        })
+      const n = null;
+      const c1_t1 = [ // unique solution
+        [0, n, n, 3, 4, n, 6, 7],
+        [n, 1, n, n, n, 5, n, n],
+        [n, n, 2, n, n, n, n, n],
+        [n, 3, n, n, n, 6, n, n],
+        [n, 4, n, n, n, 7, n, n],
+        [n, n, 5, n, n, n, n, n],
+        [n, n, 6, n, n, n, n, n],
+        [n, n, 7, n, n, n, n, n],
+      ]
+
+      // version where all n = 0
+      const ct_t1_ = [
+        [0, 0, 0, 3, 4, 0, 6, 7],
+        [0, 1, 0, 0, 0, 5, 0, 0],
+        [0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 3, 0, 0, 0, 6, 0, 0],
+        [0, 4, 0, 0, 0, 7, 0, 0],
+        [0, 0, 5, 0, 0, 0, 0, 0],
+        [0, 0, 6, 0, 0, 0, 0, 0],
+        [0, 0, 7, 0, 0, 0, 0, 0],
+      ]
+
+
+      // let output = check_json_model({
+      //   "table": [
+      //     [0, 1],
+      //     [1, 0],
+      //   ]
+      // })
+      let output = check_json_model({ "table": c1_t1 });
       console.log(output);
     })
   }, []);

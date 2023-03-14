@@ -19,52 +19,30 @@ pub struct Link {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CompositionTable {
-    pub table: Box<[Box<[usize]>]>,
+    pub table: Box<[Box<[Option<usize>]>]>,
 }
 
 impl CompositionTable {
-    pub fn new(table:
-        Vec<Vec<usize>>
-    ) -> Self {
-        let table = table
-            .into_iter()
-            .map(|row| row.into_boxed_slice())
-            .collect::<Box<[_]>>();
-        Self { table }
+    pub fn new(table: Vec<Vec<Option<usize>>>) -> Self {
+        CompositionTable {
+            table: table
+                .into_iter()
+                .map(|row| row.into_boxed_slice())
+                .collect::<Vec<_>>()
+                .into_boxed_slice(),
+        }
     }
 
-    // pub fn rows(&self) -> impl Iterator<Item = &Box<[usize]>> {
-    //     self.table.iter()
-    // }
-
-    pub fn get_row(&self, id: usize) -> &Box<[usize]> {
+    pub fn get_row(&self, id: usize) -> &Box<[Option<usize>]> {
         &self.table[id]
     }
 
-    pub fn get_col(&self, id: usize) -> Box<[usize]> {
+    pub fn get_col(&self, id: usize) -> Box<[Option<usize>]> {
         self.table
             .iter()
             .map(|row| row[id])
             .collect::<Vec<_>>()
             .into_boxed_slice()
     }
-
-    // pub fn cols(&self) -> impl Iterator<Item = Box<[usize]>> {
-    //     let mut cols = Vec::new();
-
-    //     for i in 0..self.table.len() {
-    //         cols.push(
-    //             self.table
-    //                 .iter()
-    //                 .map(|row| row[i])
-    //                 .collect::<Vec<_>>()
-    //                 .into_boxed_slice(),
-    //         );
-    //     }
-
-    //     cols.into_iter()
-    // }
-//     pub fn get_composition(&self, a: &Link, b: &Link) -> &Link {
-//         &self.table[a.source][b.target]
-//     }
 }
+

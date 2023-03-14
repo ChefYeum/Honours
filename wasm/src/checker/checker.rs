@@ -2,12 +2,8 @@ use std::vec;
 
 use super::{
     errors::CheckerError,
-    graph::{CompositionTable, Link},
+    graph::{Link, CompositionTable},
 };
-
-// pub fn check_nothing(comp_table: &CompositionTable) -> Result<(), CheckerError>{
-//     Err(CheckerError::DummyError)
-// }
 
 // TODO: check on the client side that the input is square
 pub fn check_size(
@@ -34,13 +30,13 @@ pub fn check_ids(
         .filter(|f_i|comp_table
                     .get_row(*f_i)
                     .iter()
-                    .all(|&fioi| fioi == *f_i))
+                    .all(|&fioi| fioi == Some(*f_i)))
 
         // Filter by right identity: for all i, i(f_i) = fi
         .filter(|f_i| comp_table
                     .get_col(*f_i)
                     .iter()
-                    .all(|&iofi| iofi == *f_i));
+                    .all(|&iofi| iofi == Some(*f_i)));
 
     Ok((comp_table, size, id_morphs.collect()))
 }
@@ -70,14 +66,4 @@ pub fn check_all(comp_table: &CompositionTable) -> Result<(), CheckerError> {
         // Discard the table and return Ok(())
         .map(|_| ())
     // Ok(())
-}
-
-// Run check_ids and print the ids
-pub fn print_ids(comp_table: &CompositionTable) -> Result<(), CheckerError> {
-    check_size(comp_table)
-        .and_then(check_ids)
-        .map(|(_, _, ids)| {
-            println!("ids: {:?}", ids);
-        })
-        .map(|_| ())
 }
