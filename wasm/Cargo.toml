@@ -12,3 +12,4 @@ crate-type = ["cdylib"]
 serde = { version = "1.0.152", features = ["derive"] }
 wasm-bindgen = { version = "0.2.83" }
 gloo-utils = { version = "0.1", features = ["serde"] }
+serde_json = "1.0.94"

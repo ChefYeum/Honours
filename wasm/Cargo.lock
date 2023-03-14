@@ -135,6 +135,7 @@ version = "1.4.0"
 dependencies = [
  "gloo-utils",
  "serde",
+ "serde_json",
  "wasm-bindgen",
 ]
 
