@@ -17,5 +17,5 @@
 pub enum CheckerError {
     // DummyError,
     // ArbitraryError(String),
-    TableSizeError
+    NonSquareCompTable
 }
