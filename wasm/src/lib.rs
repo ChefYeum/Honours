@@ -20,17 +20,16 @@ mod test_bar {
         Ok(table)
     }
 
-    #[test]
-    fn test_c1_s1() {
-        let comp_table = read_comp_table("test/examples/c1_s1.json").unwrap();
+    fn test_comp_table(filename: &str, expected_morph_count: usize, expected_ids: Vec<MorphID>) {
+        let comp_table = read_comp_table(filename).unwrap();
         check_morph_count(&comp_table)
             .and_then(|(table, morph_count)| {
-                assert_eq!(morph_count, 8);
+                assert_eq!(morph_count, expected_morph_count);
                 Ok((table, morph_count))
             })
             .and_then(check_ids)
             .and_then(|(table, size, ids)| {
-                assert_eq!(ids, vec![MorphID(0), MorphID(1), MorphID(2)]);
+                assert_eq!(ids, expected_ids);
                 Ok((table, size, ids))
             })
             .unwrap();
@@ -38,21 +37,29 @@ mod test_bar {
 
     #[test]
     fn test_c3() {
-        let comp_table = read_comp_table("test/examples/c3.json").unwrap();
-        check_morph_count(&comp_table)
-            .and_then(|(table, morph_count)| {
-                assert_eq!(morph_count, 10);
-                Ok((table, morph_count))
-            })
-            .and_then(check_ids)
-            .and_then(|(table, size, ids)| {
-                assert_eq!(ids, vec![MorphID(0), MorphID(1), MorphID(2), MorphID(3)]);
-                Ok((table, size, ids))
-            })
-            .unwrap();
+        test_comp_table(
+            "test/examples/c3.json",
+            9,
+            vec![MorphID(0), MorphID(1), MorphID(2), MorphID(3)],
+        );
     }
 
-        assert_eq!(result.is_ok(), true);
+    #[test]
+    fn test_c4() {
+        test_comp_table(
+            "test/examples/c4_s1.json",
+            10,
+            vec![MorphID(0), MorphID(1), MorphID(2), MorphID(3)],
+        );
+    }
+
+    #[test]
+    fn test_c5() {
+        test_comp_table(
+            "test/examples/c5_s1.json",
+            11,
+            vec![MorphID(0), MorphID(1), MorphID(2), MorphID(3)],
+        );
     }
 
     #[test]
