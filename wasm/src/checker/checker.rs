@@ -1,10 +1,10 @@
-use crate::checker::graph::MorphID;
+use crate::checker::category::MorphID;
 
 use super::{
     errors::CheckerError::{
         self, NoValidComposition, NonAssociativeComposition, NonSquareCompTable,
     },
-    graph::{CompositionTable, Link, ObjID},
+    category::{CompositionTable, Morphism, ObjID},
 };
 
 // TODO: check on the client side that the input is square
@@ -68,9 +68,9 @@ pub fn check_ids(
 
 pub fn check_source_target(
     (comp_table, morph_count, ids): (&CompositionTable, usize, Box<[MorphID]>),
-) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Link]>), CheckerError> {
+) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
     // A vector to map target id to source and target
-    let mut links: Vec<Link> = Vec::new();
+    let mut links: Vec<Morphism> = Vec::new();
 
     // let mut srcs = vec![None; morph_count]; // Initialize with None values
     for f in comp_table.get_all_morphs().iter() {
@@ -98,10 +98,10 @@ pub fn check_source_target(
         let h = hs[0];
         let g = gs[0];
 
-        links.push(Link {
-            link_id: MorphID(f.0), // We use the morphism id as the link id
-            source: ObjID(g.0),
-            target: ObjID(h.0),
+        links.push(Morphism {
+            id: MorphID(f.id()), // We use the morphism id as the link id
+            source: ObjID(g.id()),
+            target: ObjID(h.id()),
         });
     }
 
@@ -111,8 +111,8 @@ pub fn check_source_target(
 }
 
 pub fn check_composition(
-    (comp_table, morph_count, ids, links): (&CompositionTable, usize, Box<[MorphID]>, Box<[Link]>),
-) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Link]>), CheckerError> {
+    (comp_table, morph_count, ids, links): (&CompositionTable, usize, Box<[MorphID]>, Box<[Morphism]>),
+) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
     // Enumerate links so that we also have MorphID
     // TODO: make a struct for Vec<Link> that can return the numeration of f_id
     for (f_id, f) in links.iter().enumerate() {
@@ -147,7 +147,7 @@ pub fn check_assoc(
         &CompositionTable,
         usize,
         Box<[MorphID]>,
-        Box<[Link]>,
+        Box<[Morphism]>,
     ),
 ) -> Result<(), CheckerError> {
     // Check that the composition table is associative

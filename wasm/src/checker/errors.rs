@@ -12,7 +12,7 @@
 //     // RightIDFail(&'a Link),
 // }
 
-use super::graph::MorphID;
+use super::category::MorphID;
 
 
 #[derive(Debug)]

@@ -6,10 +6,22 @@ pub struct MorphID(pub usize);
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub struct ObjID(pub usize);
 
+impl MorphID {
+    pub fn id(&self) -> usize {
+        self.0
+    }
+}
+
+impl ObjID {
+    pub fn id(&self) -> usize {
+        self.0
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct Link {
+pub struct Morphism {
     // TOOO: make them private with getters
-    pub link_id: MorphID,
+    pub id: MorphID,
     pub source: ObjID,
     pub target: ObjID,
 }
@@ -30,14 +42,14 @@ impl CompositionTable {
         }
     }
 
-    pub fn get_row(&self, id: MorphID) -> &Box<[Option<MorphID>]> {
-        &self.table[id.0]
+    pub fn get_row(&self, morph: MorphID) -> &Box<[Option<MorphID>]> {
+        &self.table[morph.id()]
     }
 
     pub fn get_col(&self, id: MorphID) -> Box<[Option<MorphID>]> {
         self.table
             .iter()
-            .map(|row| row[id.0])
+            .map(|row| row[id.id()])
             .collect::<Vec<_>>()
             .into_boxed_slice()
     }
@@ -52,7 +64,7 @@ impl CompositionTable {
     // Get composition f o g
     pub fn get_composition(&self, f: MorphID, g: MorphID) -> Option<MorphID> {
         // Error if f or g is out of bounds
-        assert!(f.0 < self.table.len() && g.0 < self.table.len());
-        self.table[f.0][g.0]
+        assert!(f.id() < self.table.len() && g.id() < self.table.len());
+        self.table[f.id()][g.id()]
     }
 }

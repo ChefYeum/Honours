@@ -3,10 +3,10 @@
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 use gloo_utils::format::JsValueSerdeExt;
 
-use self::{graph::{CompositionTable}, errors::CheckerError, checker::{check_all}};
+use self::{category::{CompositionTable}, errors::CheckerError, checker::{check_all}};
 
 pub mod checker;
-pub mod graph;
+pub mod category;
 pub mod errors;
 
 fn op_err_to_js_err(e: CheckerError) -> JsValue {

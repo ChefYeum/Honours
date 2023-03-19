@@ -11,7 +11,7 @@ mod test_bar {
         checker::{
             check_assoc, check_composition, check_ids, check_morph_count, check_source_target,
         },
-        graph::{CompositionTable, MorphID},
+        category::{CompositionTable, MorphID},
     };
 
     fn read_comp_table(path: &str) -> Result<CompositionTable, io::Error> {
