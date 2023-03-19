@@ -9,21 +9,10 @@ pub struct ObjID(pub usize);
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Link {
     // TOOO: make them private with getters
-    pub linkID: MorphID,
+    pub link_id: MorphID,
     pub source: ObjID,
     pub target: ObjID,
 }
-
-// Map ID to Link
-// pub struct LinkMap<'a> {
-//     links: Box<[&'a Link]>,
-// }
-
-// impl LinkMap<'_> {
-//     pub fn get_link(&self, id: usize) -> &Link {
-//         &self.links[id]
-//     }
-// }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CompositionTable {

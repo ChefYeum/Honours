@@ -16,7 +16,6 @@ pub fn check_morph_count(
 
     for row in comp_table.table.iter() {
         if row.len() != n {
-            println!("row.len(): {}, n: {}", row.len(), n);
             return Err(NonSquareCompTable);
         }
     }
@@ -78,7 +77,7 @@ pub fn check_source_target(
         // There must be an id morphsm g such that g o f = f
         // The corresponding object to g is the source of the link
         // filter ids to find such g
-        let mut gs: Box<[&MorphID]> = ids
+        let gs: Box<[&MorphID]> = ids
             .iter()
             .filter(|g| comp_table.get_composition(**g, *f) == Some(*f))
             .collect();
@@ -88,7 +87,7 @@ pub fn check_source_target(
         // There must also be an id morphism h such that f o h = f
         // The corresponding object to h is the target of the link
         // filter ids to find such h
-        let mut hs: Box<[&MorphID]> = ids
+        let hs: Box<[&MorphID]> = ids
             .iter()
             .filter(|h| comp_table.get_composition(*f, **h) == Some(*f))
             .collect();
@@ -100,7 +99,7 @@ pub fn check_source_target(
         let g = gs[0];
 
         links.push(Link {
-            linkID: MorphID(f.0), // We use the morphism id as the link id
+            link_id: MorphID(f.0), // We use the morphism id as the link id
             source: ObjID(g.0),
             target: ObjID(h.0),
         });
@@ -126,7 +125,7 @@ pub fn check_composition(
             .enumerate()
             .filter(|(_, g)| f.target == g.source);
 
-        for (g_id, g) in gs {
+        for (g_id, _) in gs {
             // Check if the composition f ∘ g exists in the table
             if comp_table
                 .get_composition(MorphID(f_id), MorphID(g_id))
@@ -144,7 +143,7 @@ pub fn check_composition(
 }
 
 pub fn check_assoc(
-    (comp_table, morph_count, ids, src_target_map): (
+    (comp_table, _, _, _): (
         &CompositionTable,
         usize,
         Box<[MorphID]>,
@@ -178,10 +177,8 @@ pub fn check_assoc(
 pub fn check_all(comp_table: &CompositionTable) -> Result<(), CheckerError> {
     check_morph_count(comp_table)
         .and_then(check_ids)
-        // .and_then(check_source_target)
-        // .map(|(_, _, _, _src_target_map)| (_src_target_map))
-        // check_composition(comp_table)?;
-        // Discard the table and return Ok(())
+        .and_then(check_source_target)
+        .and_then(check_composition)
+        .and_then(check_assoc)
         .map(|_| ())
-    // Ok(())
 }
