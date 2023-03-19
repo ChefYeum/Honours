@@ -12,10 +12,13 @@
 //     // RightIDFail(&'a Link),
 // }
 
+use super::graph::MorphID;
+
 
 #[derive(Debug)]
 pub enum CheckerError {
     // DummyError,
     // ArbitraryError(String),
-    NonSquareCompTable
+    NonSquareCompTable,
+    NoValidComposition(MorphID, MorphID),
 }

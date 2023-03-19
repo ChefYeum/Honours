@@ -8,7 +8,7 @@ mod test_bar {
     };
 
     use crate::checker::{
-        checker::{check_ids, check_morph_count},
+        checker::{check_ids, check_morph_count, check_source_target},
         graph::{CompositionTable, MorphID},
     };
 
@@ -29,8 +29,19 @@ mod test_bar {
             })
             .and_then(check_ids)
             .and_then(|(table, size, ids)| {
-                assert_eq!(ids, expected_ids);
+                assert_eq!(
+                    ids,
+                    expected_ids
+                        .iter()
+                        .map(|&id| id)
+                        .collect::<Vec<MorphID>>()
+                        .into_boxed_slice()
+                );
                 Ok((table, size, ids))
+            })
+            // Run check_source_target
+            .and_then(|(table, size, ids)| {
+                check_source_target((table, size, ids))
             })
             .unwrap();
     }

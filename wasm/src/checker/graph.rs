@@ -8,6 +8,8 @@ pub struct ObjID(pub usize);
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Link {
+    // TOOO: make them private with getters
+    pub linkID: MorphID,
     pub source: ObjID,
     pub target: ObjID,
 }
@@ -57,4 +59,13 @@ impl CompositionTable {
             .collect::<Vec<_>>()
             .into_boxed_slice()
     }
+
+    // Get composition f o g
+    pub fn get_composition(&self, f: MorphID, g: MorphID) -> Option<MorphID> {
+        // Error if f or g is out of bounds
+        assert!(f.0 < self.table.len() && g.0 < self.table.len());
+        self.table[f.0][g.0]
+    }
+}
+
 }

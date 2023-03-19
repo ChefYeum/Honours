@@ -35,7 +35,8 @@ pub fn check_ids(
     );
 
     // let all_morphs = ;
-    let id_morphs = comp_table.get_all_morphs()
+    let id_morphs = comp_table
+        .get_all_morphs()
         .iter()
         // Check left identity
         .filter(|f_row| {
@@ -61,48 +62,49 @@ pub fn check_ids(
         .collect::<Vec<_>>()
         .into_boxed_slice();
 
-
     Ok((comp_table, morph_count, id_morphs))
 }
 
-// pub fn check_source_target(
-//     (comp_table, morph_count, ids): (&CompositionTable, usize, Vec<MorphID>),
-// ) -> Result<(&CompositionTable, usize, Vec<MorphID>, Vec<Link>), CheckerError> {
+pub fn check_source_target(
+    (comp_table, morph_count, ids): (&CompositionTable, usize, Box<[MorphID]>),
+) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Link]>), CheckerError> {
+    // A vector to map target id to source and target
+    let mut links: Vec<Link> = Vec::new();
 
-//     // A vector to map target id to source and target
-//     let mut links: Vec<Link> = vec![];
+    // let mut srcs = vec![None; morph_count]; // Initialize with None values
+    for f in comp_table.get_all_morphs().iter() {
+        // There must be an id morphsm g such that g o f = f
+        // The corresponding object to g is the source of the link
+        // filter ids to find such g
+        let mut gs: Box<[&MorphID]> = ids
+            .iter()
+            .filter(|g| comp_table.get_composition(**g, *f) == Some(*f))
+            .collect();
 
-//     // let mut srcs = vec![None; morph_count]; // Initialize with None values
-//     for f in comp_table.get_all_morphs().iter() {
-//         // There must be an id morphsm g such that g o f = f
-//         // The corresponding object to g is the source of the link
-//         // filter ids to find such g
-//         let gs = ids
-//             .iter()
-//             .filter(|g| comp_table.get_composition(**g, *f) == Some(*f));
-//         assert_eq!(gs.count(), 1);
+        assert_eq!(gs.len(), 1);
 
-//         // There must also be an id morphism h such that f o h = f
-//         // The corresponding object to h is the target of the link
-//         // filter ids to find such h
-//         let hs = ids
-//             .iter()
-//             .filter(|h| comp_table.get_composition(*f, **h) == Some(*f));
-//         assert_eq!(hs.count(), 1);
+        // There must also be an id morphism h such that f o h = f
+        // The corresponding object to h is the target of the link
+        // filter ids to find such h
+        let mut hs: Box<[&MorphID]> = ids
+            .iter()
+            .filter(|h| comp_table.get_composition(*f, **h) == Some(*f))
+            .collect();
 
-//         // Now we know there must be exactly one g and one h
-//         let g = gs.next().unwrap();
-//         let h = hs.next().unwrap();
+        assert_eq!(hs.len(), 1);
 
-//         links[f.0] = Link {
-//             linkID: MorphID(f.0), // We use the morphism id as the link id
-//             source: ObjID(g.0),
-//             target: ObjID(h.0),
-//         };
-//     }
+        // Now we know there must be exactly one g and one h
+        let h = hs[0];
+        let g = gs[0];
 
-//     // let mut src_target_map: Box<[Box<[Box<[Link]>]>]>;
-//     // let mut src_target_map: Vec<Vec<Vec<Link>>>;
+        links.push(Link {
+            linkID: MorphID(f.0), // We use the morphism id as the link id
+            source: ObjID(g.0),
+            target: ObjID(h.0),
+        });
+    }
+
+    assert_eq!(links.len(), morph_count);
 
 //     // for link in src_target_links.iter() {
 //     //     let source_idx = link.source.0;
@@ -112,6 +114,9 @@ pub fn check_ids(
 
 //     return Ok((comp_table, morph_count, ids, links));
 // }
+
+    return Ok((comp_table, morph_count, ids, links.into()));
+}
 
 // pub fn check_composition((comp_table, morph_count, ids, src_target_map): (&CompositionTable, usize, Vec<MorphID>, Vec<Vec<Vec<Link>>>)) -> Result<(), CheckerError> {
 
