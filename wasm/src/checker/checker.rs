@@ -2,7 +2,7 @@ use crate::checker::category::MorphID;
 
 use super::{
     errors::CheckerError::{
-        self, NoValidComposition, NonAssociativeComposition, NonSquareCompTable,
+        self, NoValidComposition, NonAssociativeComposition, NonSquareCompTable, EmptyCategory
     },
     category::{CompositionTable, Morphism, ObjID},
 };
@@ -13,6 +13,10 @@ pub fn check_morph_count(
     comp_table: &CompositionTable,
 ) -> Result<(&CompositionTable, usize), CheckerError> {
     let n = comp_table.table.len();
+
+    if n == 0 {
+        return Err(EmptyCategory);
+    }
 
     for row in comp_table.table.iter() {
         if row.len() != n {
@@ -27,15 +31,6 @@ pub fn check_morph_count(
 pub fn check_ids(
     (comp_table, morph_count): (&CompositionTable, usize),
 ) -> Result<(&CompositionTable, usize, Box<[MorphID]>), CheckerError> {
-    println!(
-        "first row: {:?}\n",
-        comp_table
-            .get_row(MorphID(0))
-            .iter()
-            .filter_map(|fioi| fioi.as_ref())
-    );
-
-    // let all_morphs = ;
     let id_morphs = comp_table
         .get_all_morphs()
         .iter()
