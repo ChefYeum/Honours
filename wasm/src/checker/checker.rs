@@ -1,7 +1,9 @@
 use crate::checker::graph::MorphID;
 
 use super::{
-    errors::CheckerError::{self, NoValidComposition, NonSquareCompTable},
+    errors::CheckerError::{
+        self, NoValidComposition, NonAssociativeComposition, NonSquareCompTable,
+    },
     graph::{CompositionTable, Link, ObjID},
 };
 
@@ -15,7 +17,7 @@ pub fn check_morph_count(
     for row in comp_table.table.iter() {
         if row.len() != n {
             println!("row.len(): {}, n: {}", row.len(), n);
-            return Err(CheckerError::NonSquareCompTable);
+            return Err(NonSquareCompTable);
         }
     }
 
@@ -105,15 +107,6 @@ pub fn check_source_target(
     }
 
     assert_eq!(links.len(), morph_count);
-
-//     // for link in src_target_links.iter() {
-//     //     let source_idx = link.source.0;
-//     //     let target_idx = link.target.0;
-//     //     src_target_map[source_idx][target_idx].push(*link);
-//     // }
-
-//     return Ok((comp_table, morph_count, ids, links));
-// }
 
     return Ok((comp_table, morph_count, ids, links.into()));
 }

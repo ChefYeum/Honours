@@ -67,5 +67,3 @@ impl CompositionTable {
         self.table[f.0][g.0]
     }
 }
-
-}
