@@ -1,8 +1,8 @@
 use crate::checker::graph::MorphID;
 
 use super::{
-    errors::CheckerError,
-    graph::{CompositionTable},
+    errors::CheckerError::{self, NoValidComposition, NonSquareCompTable},
+    graph::{CompositionTable, Link, ObjID},
 };
 
 // TODO: check on the client side that the input is square
@@ -25,7 +25,7 @@ pub fn check_morph_count(
 // TODO: do they need to be public
 pub fn check_ids(
     (comp_table, morph_count): (&CompositionTable, usize),
-) -> Result<(&CompositionTable, usize, Vec<MorphID>), CheckerError> {
+) -> Result<(&CompositionTable, usize, Box<[MorphID]>), CheckerError> {
     println!(
         "first row: {:?}\n",
         comp_table
@@ -34,15 +34,16 @@ pub fn check_ids(
             .filter_map(|fioi| fioi.as_ref())
     );
 
-
-    let all_morphs = comp_table.get_all_morphs();
-    let id_morphs = all_morphs.iter()
+    // let all_morphs = ;
+    let id_morphs = comp_table.get_all_morphs()
+        .iter()
         // Check left identity
         .filter(|f_row| {
             // println!("rows: {:?}", comp_table.get_row(**f_row).iter());
             comp_table
-                .get_row(**f_row).iter()
-                .enumerate() // Add column index 
+                .get_row(**f_row)
+                .iter()
+                .enumerate() // Add column index
                 // Unwrap Option and discard all None
                 .filter_map(|(f_col, &fr_o_fc)| fr_o_fc.map(|fioi| (f_col, fioi)))
                 .all(|(fr_i, fr_o_fc)| fr_o_fc == MorphID(fr_i))
@@ -50,28 +51,113 @@ pub fn check_ids(
         // Check right identity
         .filter(|f_col| {
             comp_table
-                .get_col(**f_col).iter()
+                .get_col(**f_col)
+                .iter()
                 .enumerate()
                 .filter_map(|(f_row, &fc_o_fr)| fc_o_fr.map(|fioi| (f_row, fioi)))
                 .all(|(fc_i, fc_o_fr)| fc_o_fr == MorphID(fc_i))
-        });
+        })
+        .map(|&f| f)
+        .collect::<Vec<_>>()
+        .into_boxed_slice();
 
-    Ok((comp_table, morph_count, id_morphs.map(|f_i| *f_i).collect()))
+
+    Ok((comp_table, morph_count, id_morphs))
 }
 
 // pub fn check_source_target(
-//     (comp_table, size, ids): (&CompositionTable, usize, Vec<usize>),
-// ) -> Result<(&CompositionTable, usize, Vec<usize>, Vec<Link>), CheckerError> {
-//     // A vector to map target id to source and target
-//     let src_target_map: Vec<Link> = vec![Link {
-//         source: ObjID(0),
-//         target: ObjID(0),
-//     }];
+//     (comp_table, morph_count, ids): (&CompositionTable, usize, Vec<MorphID>),
+// ) -> Result<(&CompositionTable, usize, Vec<MorphID>, Vec<Link>), CheckerError> {
 
-//     Ok((comp_table, size, ids, src_target_map))
+//     // A vector to map target id to source and target
+//     let mut links: Vec<Link> = vec![];
+
+//     // let mut srcs = vec![None; morph_count]; // Initialize with None values
+//     for f in comp_table.get_all_morphs().iter() {
+//         // There must be an id morphsm g such that g o f = f
+//         // The corresponding object to g is the source of the link
+//         // filter ids to find such g
+//         let gs = ids
+//             .iter()
+//             .filter(|g| comp_table.get_composition(**g, *f) == Some(*f));
+//         assert_eq!(gs.count(), 1);
+
+//         // There must also be an id morphism h such that f o h = f
+//         // The corresponding object to h is the target of the link
+//         // filter ids to find such h
+//         let hs = ids
+//             .iter()
+//             .filter(|h| comp_table.get_composition(*f, **h) == Some(*f));
+//         assert_eq!(hs.count(), 1);
+
+//         // Now we know there must be exactly one g and one h
+//         let g = gs.next().unwrap();
+//         let h = hs.next().unwrap();
+
+//         links[f.0] = Link {
+//             linkID: MorphID(f.0), // We use the morphism id as the link id
+//             source: ObjID(g.0),
+//             target: ObjID(h.0),
+//         };
+//     }
+
+//     // let mut src_target_map: Box<[Box<[Box<[Link]>]>]>;
+//     // let mut src_target_map: Vec<Vec<Vec<Link>>>;
+
+//     // for link in src_target_links.iter() {
+//     //     let source_idx = link.source.0;
+//     //     let target_idx = link.target.0;
+//     //     src_target_map[source_idx][target_idx].push(*link);
+//     // }
+
+//     return Ok((comp_table, morph_count, ids, links));
 // }
 
-// pub fn check_composition(comp_table: &CompositionTable) -> Result<(), CheckerError> {
+// pub fn check_composition((comp_table, morph_count, ids, src_target_map): (&CompositionTable, usize, Vec<MorphID>, Vec<Vec<Vec<Link>>>)) -> Result<(), CheckerError> {
+
+//     // Check that the composition table is associative
+//     for f in comp_table.get_all_morphs().iter() {
+//         for g in comp_table.get_all_morphs().iter() {
+//             for h in comp_table.get_all_morphs().iter() {
+//                 let fg = comp_table.get_composition(*f, *g);
+//                 let gh = comp_table.get_composition(*g, *h);
+//                 let fgh = comp_table.get_composition(*f, *gh.unwrap());
+//                 let fgh2 = comp_table.get_composition(*fg.unwrap(), *h);
+
+//                 if fgh != fgh2 {
+//                     return Err(CheckerError::NonAssociativeCompTable);
+//                 }
+//             }
+//         }
+//     }
+
+// pub fn check_composition(
+//     (comp_table, morph_count, ids, links): (&CompositionTable, usize, Vec<MorphID>, Vec<Link>)
+// ) -> Result<(), CheckerError> {
+//     // Enumerate links so that we also have MorphID
+//     for (f_id, f) in links.iter().enumerate() {
+//         // Let f: A -> B
+//         // get all morphisms g: B -> C from links
+
+//         // Get the following while keeping the MorphID as well as the Link
+//         // let gs = links.iter().filter(|g| f.target == g.source)
+//         let gs = links
+//             .iter()
+//             .enumerate()
+//             .filter(|(_, g)| f.target == g.source)
+
+//         for (g_id, g) in gs {
+//             // Check if the composition f ∘ g exists in the composition table
+//             if let Some(composition) = comp_table.get_composition(f_id, g_id) {
+//                 // If it exists, continue with the next g
+//                 continue;
+//             } else {
+//                 // If it doesn't exist, return an error
+//                 // return Err(NoValidComposition(f, g));
+//                 // Get MorphID from f and g
+//             }
+//         }
+//     }
 //     Ok(())
 // }
 
