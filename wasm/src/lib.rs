@@ -8,7 +8,9 @@ mod test_bar {
     };
 
     use crate::checker::{
-        checker::{check_ids, check_morph_count, check_source_target},
+        checker::{
+            check_assoc, check_composition, check_ids, check_morph_count, check_source_target,
+        },
         graph::{CompositionTable, MorphID},
     };
 
@@ -40,24 +42,23 @@ mod test_bar {
                 Ok((table, size, ids))
             })
             // Run check_source_target
-            .and_then(|(table, size, ids)| {
-                check_source_target((table, size, ids))
+            .and_then(|(table, size, ids)| check_source_target((table, size, ids)))
+            .and_then(|(table, size, ids, links)| {
+                // Check that the links are correct
+                // TODO: implement
+                // assert_eq!(links.len(), size);
+                // for link in links.iter() {
+                //     assert_eq!(link.source.0, link.linkID.0);
+                //     assert_eq!(link.target.0, link.linkID.0);
+                // }
+                Ok((table, size, ids, links))
             })
-            .and_then(
-                |(table, size, ids, links)| {
-                    // Check that the links are correct
-                    // TODO: implement
-                    // assert_eq!(links.len(), size);
-                    // for link in links.iter() {
-                    //     assert_eq!(link.source.0, link.linkID.0);
-                    //     assert_eq!(link.target.0, link.linkID.0);
-                    // }
-                    Ok((table, size, ids, links))
-                },
-            ).and_then(|(comp_table, morph_count, ids, links)| {
-                check_composition(( comp_table, morph_count, ids, links))
+            .and_then(|(comp_table, morph_count, ids, links)| {
+                check_composition((comp_table, morph_count, ids, links))
             })
-
+            .and_then(|(comp_table, morph_count, ids, links)| {
+                check_assoc((comp_table, morph_count, ids, links))
+            })
             .unwrap();
     }
 

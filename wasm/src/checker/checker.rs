@@ -150,23 +150,37 @@ pub fn check_composition(
     Ok((comp_table, morph_count, ids, links))
 }
 
-// pub fn check_assoc((comp_table, morph_count, ids, src_target_map): (&CompositionTable, usize, Vec<MorphID>, Vec<Vec<Vec<Link>>>)) -> Result<(), CheckerError> {
+pub fn check_assoc(
+    (comp_table, morph_count, ids, src_target_map): (
+        &CompositionTable,
+        usize,
+        Box<[MorphID]>,
+        Box<[Link]>,
+    ),
+) -> Result<(), CheckerError> {
+    // Check that the composition table is associative
+    for f in comp_table.get_all_morphs().iter() {
+        for g in comp_table.get_all_morphs().iter() {
+            for h in comp_table.get_all_morphs().iter() {
+                let fg = comp_table.get_composition(*f, *g);
+                let gh = comp_table.get_composition(*g, *h);
 
-//     // Check that the composition table is associative
-//     for f in comp_table.get_all_morphs().iter() {
-//         for g in comp_table.get_all_morphs().iter() {
-//             for h in comp_table.get_all_morphs().iter() {
-//                 let fg = comp_table.get_composition(*f, *g);
-//                 let gh = comp_table.get_composition(*g, *h);
-//                 let fgh = comp_table.get_composition(*f, *gh.unwrap());
-//                 let fgh2 = comp_table.get_composition(*fg.unwrap(), *h);
+                if fg.is_none() || gh.is_none() {
+                    continue;
+                }
 
-//                 if fgh != fgh2 {
-//                     return Err(CheckerError::NonAssociativeCompTable);
-//                 }
-//             }
-//         }
-//     }
+                let f_gh = comp_table.get_composition(*f, gh.unwrap());
+                let fg_h = comp_table.get_composition(fg.unwrap(), *h);
+
+                if f_gh != fg_h {
+                    return Err(NonAssociativeComposition(*f, *g, *h));
+                }
+            }
+        }
+    }
+
+    return Ok(());
+}
 
 pub fn check_all(comp_table: &CompositionTable) -> Result<(), CheckerError> {
     check_morph_count(comp_table)

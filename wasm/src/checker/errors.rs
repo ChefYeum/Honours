@@ -21,4 +21,5 @@ pub enum CheckerError {
     // ArbitraryError(String),
     NonSquareCompTable,
     NoValidComposition(MorphID, MorphID),
+    NonAssociativeComposition(MorphID, MorphID, MorphID),
 }
