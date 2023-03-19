@@ -43,6 +43,21 @@ mod test_bar {
             .and_then(|(table, size, ids)| {
                 check_source_target((table, size, ids))
             })
+            .and_then(
+                |(table, size, ids, links)| {
+                    // Check that the links are correct
+                    // TODO: implement
+                    // assert_eq!(links.len(), size);
+                    // for link in links.iter() {
+                    //     assert_eq!(link.source.0, link.linkID.0);
+                    //     assert_eq!(link.target.0, link.linkID.0);
+                    // }
+                    Ok((table, size, ids, links))
+                },
+            ).and_then(|(comp_table, morph_count, ids, links)| {
+                check_composition(( comp_table, morph_count, ids, links))
+            })
+
             .unwrap();
     }
 

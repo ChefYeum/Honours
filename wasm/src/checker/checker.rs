@@ -118,7 +118,39 @@ pub fn check_source_target(
     return Ok((comp_table, morph_count, ids, links.into()));
 }
 
-// pub fn check_composition((comp_table, morph_count, ids, src_target_map): (&CompositionTable, usize, Vec<MorphID>, Vec<Vec<Vec<Link>>>)) -> Result<(), CheckerError> {
+pub fn check_composition(
+    (comp_table, morph_count, ids, links): (&CompositionTable, usize, Box<[MorphID]>, Box<[Link]>),
+) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Link]>), CheckerError> {
+    // Enumerate links so that we also have MorphID
+    // TODO: make a struct for Vec<Link> that can return the numeration of f_id
+    for (f_id, f) in links.iter().enumerate() {
+        // Let f: A -> B
+        // get all morphisms g: B -> C from links
+
+        // Get the following while keeping the MorphID as well as the Link
+        let gs = links
+            .iter()
+            .enumerate()
+            .filter(|(_, g)| f.target == g.source);
+
+        for (g_id, g) in gs {
+            // Check if the composition f ∘ g exists in the table
+            if comp_table
+                .get_composition(MorphID(f_id), MorphID(g_id))
+                .is_some()
+            {
+                // If it exists, continue with the next g
+                continue;
+            } else {
+                // If it doesn't exist, return an error
+                return Err(NoValidComposition(MorphID(f_id), MorphID(g_id)));
+            }
+        }
+    }
+    Ok((comp_table, morph_count, ids, links))
+}
+
+// pub fn check_assoc((comp_table, morph_count, ids, src_target_map): (&CompositionTable, usize, Vec<MorphID>, Vec<Vec<Vec<Link>>>)) -> Result<(), CheckerError> {
 
 //     // Check that the composition table is associative
 //     for f in comp_table.get_all_morphs().iter() {
@@ -135,36 +167,6 @@ pub fn check_source_target(
 //             }
 //         }
 //     }
-
-// pub fn check_composition(
-//     (comp_table, morph_count, ids, links): (&CompositionTable, usize, Vec<MorphID>, Vec<Link>)
-// ) -> Result<(), CheckerError> {
-//     // Enumerate links so that we also have MorphID
-//     for (f_id, f) in links.iter().enumerate() {
-//         // Let f: A -> B
-//         // get all morphisms g: B -> C from links
-
-//         // Get the following while keeping the MorphID as well as the Link
-//         // let gs = links.iter().filter(|g| f.target == g.source)
-//         let gs = links
-//             .iter()
-//             .enumerate()
-//             .filter(|(_, g)| f.target == g.source)
-
-//         for (g_id, g) in gs {
-//             // Check if the composition f ∘ g exists in the composition table
-//             if let Some(composition) = comp_table.get_composition(f_id, g_id) {
-//                 // If it exists, continue with the next g
-//                 continue;
-//             } else {
-//                 // If it doesn't exist, return an error
-//                 // return Err(NoValidComposition(f, g));
-//                 // Get MorphID from f and g
-//             }
-//         }
-//     }
-//     Ok(())
-// }
 
 pub fn check_all(comp_table: &CompositionTable) -> Result<(), CheckerError> {
     check_morph_count(comp_table)
