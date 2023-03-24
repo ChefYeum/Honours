@@ -1,3 +1,4 @@
+use std::marker::PhantomData;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
@@ -26,23 +27,40 @@ pub struct Morphism {
     pub target: ObjID,
 }
 
+pub enum Composition {}
+pub enum TensorProduct {}
+
+pub trait CarleyOp {}
+impl CarleyOp for Composition {}
+impl CarleyOp for TensorProduct {}
 #[derive(Serialize, Deserialize, Debug)]
-pub struct CompositionTable {
+pub struct CarleyTable<T: CarleyOp> {
     pub table: Box<[Box<[Option<MorphID>]>]>,
+
+    #[serde(skip)]
+    _phantom: PhantomData<T>,
 }
 
-impl CompositionTable {
+impl<T: CarleyOp> CarleyTable<T> {
     pub fn new(table: Vec<Vec<Option<MorphID>>>) -> Self {
-        CompositionTable {
+        CarleyTable {
             table: table
                 .into_iter()
                 .map(|row| row.into_boxed_slice())
                 .collect::<Vec<_>>()
                 .into_boxed_slice(),
+            _phantom: PhantomData,
         }
     }
 
-    pub fn get_row(&self, morph: MorphID) -> &Box<[Option<MorphID>]> {
+    pub fn get_all_morphs(&self) -> Box<[MorphID]> {
+        (0..self.table.len())
+            .map(|i| MorphID(i))
+            .collect::<Vec<_>>()
+            .into_boxed_slice()
+    }
+
+    pub fn get_row(&self, morph: MorphID) -> &[Option<MorphID>] {
         &self.table[morph.id()]
     }
 
@@ -54,17 +72,22 @@ impl CompositionTable {
             .into_boxed_slice()
     }
 
-    pub fn get_all_morphs(&self) -> Box<[MorphID]> {
-        (0..self.table.len())
-            .map(|i| MorphID(i))
-            .collect::<Vec<_>>()
-            .into_boxed_slice()
-    }
-
-    // Get composition f o g
-    pub fn get_composition(&self, f: MorphID, g: MorphID) -> Option<MorphID> {
+    pub fn get_product(&self, f: MorphID, g: MorphID) -> Option<MorphID> {
         // Error if f or g is out of bounds
         assert!(f.id() < self.table.len() && g.id() < self.table.len());
         self.table[f.id()][g.id()]
+    }
+}
+
+impl CarleyTable<Composition> {
+    // Get composition f o g
+    pub fn get_composition(&self, f: MorphID, g: MorphID) -> Option<MorphID> {
+        self.get_product(f, g)
+    }
+}
+
+impl CarleyTable<TensorProduct> {
+    pub fn get_tensor_product(&self, f: MorphID, g: MorphID) -> Option<MorphID> {
+        self.get_product(f, g)
     }
 }

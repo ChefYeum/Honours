@@ -11,14 +11,14 @@ mod test_bar {
         checker::{
             check_assoc, check_composition, check_ids, check_morph_count, check_source_target,
         },
-        category::{CompositionTable, MorphID},
+        category::{CarleyTable, MorphID, Composition},
     };
 
-    fn read_comp_table(path: &str) -> Result<CompositionTable, io::Error> {
+    fn read_comp_table(path: &str) -> Result<CarleyTable<Composition>, io::Error> {
         let mut file = File::open(path)?;
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;
-        let table: CompositionTable = serde_json::from_str(&contents)?;
+        let table: CarleyTable<Composition> = serde_json::from_str(&contents)?;
         Ok(table)
     }
 
@@ -92,7 +92,7 @@ mod test_bar {
     #[test]
     fn test_dummy_check_ids() {
         // let comp_table: CompositionTable = CompositionTable::new(vec![vec![0, 0], vec![1, 1]]);
-        let comp_table = CompositionTable::new(vec![vec![Some(MorphID(0))]]);
+        let comp_table = CarleyTable::new(vec![vec![Some(MorphID(0))]]);
         let result = check_morph_count(&comp_table)
             .and_then(check_ids)
             // .and_then(check_source_target(_));

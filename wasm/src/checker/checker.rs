@@ -1,17 +1,18 @@
 use crate::checker::category::MorphID;
+use crate::checker::category::{Composition, TensorProduct};
 
 use super::{
     errors::CheckerError::{
         self, NoValidComposition, NonAssociativeComposition, NonSquareCompTable, EmptyCategory
     },
-    category::{CompositionTable, Morphism, ObjID},
+    category::{CarleyTable, Morphism, ObjID},
 };
 
 // TODO: check on the client side that the input is square
 // Returns the number of morphisms
 pub fn check_morph_count(
-    comp_table: &CompositionTable,
-) -> Result<(&CompositionTable, usize), CheckerError> {
+    comp_table: &CarleyTable<Composition>,
+) -> Result<(&CarleyTable<Composition>, usize), CheckerError> {
     let n = comp_table.table.len();
 
     if n == 0 {
@@ -29,8 +30,8 @@ pub fn check_morph_count(
 
 // TODO: do they need to be public
 pub fn check_ids(
-    (comp_table, morph_count): (&CompositionTable, usize),
-) -> Result<(&CompositionTable, usize, Box<[MorphID]>), CheckerError> {
+    (comp_table, morph_count): (&CarleyTable<Composition>, usize),
+) -> Result<(&CarleyTable<Composition>, usize, Box<[MorphID]>), CheckerError> {
     let id_morphs = comp_table
         .get_all_morphs()
         .iter()
@@ -62,8 +63,8 @@ pub fn check_ids(
 }
 
 pub fn check_source_target(
-    (comp_table, morph_count, ids): (&CompositionTable, usize, Box<[MorphID]>),
-) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
+    (comp_table, morph_count, ids): (&CarleyTable<Composition>, usize, Box<[MorphID]>),
+) -> Result<(&CarleyTable<Composition>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
     // A vector to map target id to source and target
     let mut links: Vec<Morphism> = Vec::new();
 
@@ -106,8 +107,8 @@ pub fn check_source_target(
 }
 
 pub fn check_composition(
-    (comp_table, morph_count, ids, links): (&CompositionTable, usize, Box<[MorphID]>, Box<[Morphism]>),
-) -> Result<(&CompositionTable, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
+    (comp_table, morph_count, ids, links): (&CarleyTable<Composition>, usize, Box<[MorphID]>, Box<[Morphism]>),
+) -> Result<(&CarleyTable<Composition>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
     // Enumerate links so that we also have MorphID
     // TODO: make a struct for Vec<Link> that can return the numeration of f_id
     for (f_id, f) in links.iter().enumerate() {
@@ -139,7 +140,7 @@ pub fn check_composition(
 
 pub fn check_assoc(
     (comp_table, _, _, _): (
-        &CompositionTable,
+        &CarleyTable<Composition>,
         usize,
         Box<[MorphID]>,
         Box<[Morphism]>,
@@ -169,7 +170,7 @@ pub fn check_assoc(
     return Ok(());
 }
 
-pub fn check_all(comp_table: &CompositionTable) -> Result<(), CheckerError> {
+pub fn check_all(comp_table: &CarleyTable<Composition>) -> Result<(), CheckerError> {
     check_morph_count(comp_table)
         .and_then(check_ids)
         .and_then(check_source_target)
