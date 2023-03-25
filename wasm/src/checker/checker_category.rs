@@ -106,9 +106,9 @@ pub fn check_source_target<Op: CarleyOp>(
     return Ok((comp_table, morph_count, ids, links.into()));
 }
 
-pub fn check_composition(
-    (comp_table, morph_count, ids, links): (&CarleyTable<Composition>, usize, Box<[MorphID]>, Box<[Morphism]>),
-) -> Result<(&CarleyTable<Composition>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
+pub fn check_product<Op: CarleyOp>(
+    (comp_table, morph_count, ids, links): (&CarleyTable<Op>, usize, Box<[MorphID]>, Box<[Morphism]>),
+) -> Result<(&CarleyTable<Op>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
     // Enumerate links so that we also have MorphID
     // TODO: make a struct for Vec<Link> that can return the numeration of f_id
     for (f_id, f) in links.iter().enumerate() {
@@ -124,7 +124,7 @@ pub fn check_composition(
         for (g_id, _) in gs {
             // Check if the composition f ∘ g exists in the table
             if comp_table
-                .get_composition(MorphID(f_id), MorphID(g_id))
+                .get_product(MorphID(f_id), MorphID(g_id))
                 .is_some()
             {
                 // If it exists, continue with the next g
@@ -138,9 +138,9 @@ pub fn check_composition(
     Ok((comp_table, morph_count, ids, links))
 }
 
-pub fn check_assoc(
+pub fn check_assoc<Op: CarleyOp>(
     (comp_table, _, _, _): (
-        &CarleyTable<Composition>,
+        &CarleyTable<Op>,
         usize,
         Box<[MorphID]>,
         Box<[Morphism]>,
@@ -150,15 +150,15 @@ pub fn check_assoc(
     for f in comp_table.get_all_morphs().iter() {
         for g in comp_table.get_all_morphs().iter() {
             for h in comp_table.get_all_morphs().iter() {
-                let fg = comp_table.get_composition(*f, *g);
-                let gh = comp_table.get_composition(*g, *h);
+                let fg = comp_table.get_product(*f, *g);
+                let gh = comp_table.get_product(*g, *h);
 
                 if fg.is_none() || gh.is_none() {
                     continue;
                 }
 
-                let f_gh = comp_table.get_composition(*f, gh.unwrap());
-                let fg_h = comp_table.get_composition(fg.unwrap(), *h);
+                let f_gh = comp_table.get_product(*f, gh.unwrap());
+                let fg_h = comp_table.get_product(fg.unwrap(), *h);
 
                 if f_gh != fg_h {
                     return Err(NonAssociativeComposition(*f, *g, *h));
@@ -170,11 +170,20 @@ pub fn check_assoc(
     return Ok(());
 }
 
-pub fn check_all(comp_table: &CarleyTable<Composition>) -> Result<(), CheckerError> {
+pub fn check_category(comp_table: &CarleyTable<Composition>) -> Result<(), CheckerError> {
     check_morph_count(comp_table)
         .and_then(check_ids)
         .and_then(check_source_target)
-        .and_then(check_composition)
+        .and_then(check_product)
+        .and_then(check_assoc)
+        .map(|_| ())
+}
+
+pub fn check_monoidal(tensor_table: &CarleyTable<TensorProduct>) -> Result<(), CheckerError> {
+    check_morph_count(tensor_table)
+        .and_then(check_ids)
+        .and_then(check_source_target)
+        .and_then(check_product)
         .and_then(check_assoc)
         .map(|_| ())
 }

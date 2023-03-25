@@ -10,7 +10,7 @@ mod test_bar {
     use crate::{
         checker::category::{CarleyTable, Composition, MorphID},
         checker::checker_category::{
-            check_assoc, check_composition, check_ids, check_morph_count, check_source_target,
+            check_assoc, check_product, check_ids, check_morph_count, check_source_target,
         },
     };
 
@@ -54,7 +54,7 @@ mod test_bar {
                 Ok((table, size, ids, links))
             })
             .and_then(|(comp_table, morph_count, ids, links)| {
-                check_composition((comp_table, morph_count, ids, links))
+                check_product((comp_table, morph_count, ids, links))
             })
             .and_then(|(comp_table, morph_count, ids, links)| {
                 check_assoc((comp_table, morph_count, ids, links))

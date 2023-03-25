@@ -3,7 +3,7 @@
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 use gloo_utils::format::JsValueSerdeExt;
 
-use self::{category::{CarleyTable, Composition}, errors::CheckerError, checker_category::{check_all}};
+use self::{category::{CarleyTable, Composition}, errors::CheckerError, checker_category::{check_category}};
 
 pub mod checker_category;
 pub mod category;
@@ -17,5 +17,5 @@ fn op_err_to_js_err(e: CheckerError) -> JsValue {
 #[wasm_bindgen]
 pub fn check_json_model(val: JsValue) -> Result<(), JsValue> {
     let m: CarleyTable<Composition> = val.into_serde().unwrap();
-    check_all(&m).map_err(op_err_to_js_err)
+    check_category(&m).map_err(op_err_to_js_err)
 }
