@@ -8,39 +8,16 @@ import { nc1, c3 } from '../../cypress/component/exampleModels'
 
 // MUI:
 import Box from '@mui/material/Box';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-
-import { Global } from '@emotion/react';
 import { styled } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { grey } from '@mui/material/colors';
-import Counter from './Counter'
-import Table from './Table'
-import { Button, Fab } from '@mui/material'
+import { Fab, Modal, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
-
 import init, { check_json_model } from '../../wasm/pkg'
-
-const drawerBleeding = 56;
+import TableEditor from './TableEditor'
 
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
   backgroundColor: theme.palette.background.default,
 }));
-
-const StyledBox = styled(Box)(({ theme }) => ({
-  backgroundColor: grey[800],
-}));
-
-// const Puller = styled(Box)(({ theme }) => ({
-//   width: 30,
-//   height: 6,
-//   backgroundColor: grey[900],
-//   borderRadius: 3,
-//   position: 'absolute',
-//   top: 8,
-//   left: 'calc(50% - 15px)',
-// }));
 
 // Import without SSR:
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), {
@@ -62,7 +39,10 @@ function genRandomTree(N = 50) {
 const Home: NextPage = () => {
 
   const [open, setOpen] = useState(false);
-  const [model, setModel] = useState(c3);
+  const [model, _] = useState(c3);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     init().then(() => {
@@ -99,28 +79,11 @@ const Home: NextPage = () => {
   }, []);
 
 
-  // if (!ctx.wasm) {
-  //   return <>...</>
-  // }
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
-
-
   return (
     <Root>
-      <CssBaseline />
-      <Global
-        styles={{
-          '.MuiDrawer-root > .MuiPaper-root': {
-            // overflow: 'visible',
-          },
-        }}
-      />
       <Fab
         variant="extended"
-        onClick={toggleDrawer(true)}
+        onClick={handleOpen}
         style={{
           margin: 0,
           position: 'fixed',
@@ -156,48 +119,27 @@ const Home: NextPage = () => {
         linkDirectionalArrowRelPos={1}
         linkCurvature={0.25}
       />
-      <SwipeableDrawer
-        // container={container}
-        anchor="right"
+      <Modal
         open={open}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
-        swipeAreaWidth={drawerBleeding}
-        disableSwipeToOpen={false}
-        ModalProps={{
-          keepMounted: true,
-        }}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <StyledBox
-          sx={{
-            position: 'absolute',
-            // top: -drawerBleeding,
-            // borderTopLeftRadius: 8,
-            // borderTopRightRadius: 8,
-            visibility: 'visible',
-            right: 0,
-            left: 0,
-          }}
-
-        >
-          {/* <Puller /> */}
-        </StyledBox>
-        <StyledBox
-          sx={{
-            px: 2,
-            pb: 2,
-            height: '100%',
-            overflow: 'auto',
-            width: 960,
-          }}
-        >
-          <Counter />
-          <Table />
-        </StyledBox>
-        <Button variant="contained" onClick={() => {
-          // Do nothing? 
-        }}>Verify</Button>
-      </SwipeableDrawer>
+        <Box sx={{
+          position: 'absolute' as 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '80vw',
+          height: '80vh',
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <TableEditor />
+        </Box>
+      </Modal>
     </Root>
   );
 }
