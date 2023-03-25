@@ -3,13 +3,13 @@
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 use gloo_utils::format::JsValueSerdeExt;
 
-use self::{category::{CarleyTable, Composition}, errors::CheckerError, checker_category::{check_category}};
+use self::{category::{CarleyTable, Composition, CarleyOp}, errors::CheckerError, checker_category::{check_category}, };
 
 pub mod checker_category;
 pub mod category;
 pub mod errors;
 
-fn op_err_to_js_err(e: CheckerError) -> JsValue {
+fn op_err_to_js_err<Op: CarleyOp>(e: CheckerError<Op> ) -> JsValue {
     // JsValue::from_serde(&e).unwrap()
     JsValue::from_str(&format!("{:?}", e))
 }

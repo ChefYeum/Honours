@@ -1,10 +1,15 @@
-use super::category::MorphID;
+use std::marker::PhantomData;
 
+use super::category::{CarleyOp, MorphID};
 
 #[derive(Debug)]
-pub enum CheckerError {
-    NonSquareCompTable,
-    NoValidComposition(MorphID, MorphID),
-    NonAssociativeComposition(MorphID, MorphID, MorphID),
-    EmptyCategory
+pub enum CheckerError<T: CarleyOp> {
+    NonSquareTable,
+    NoValidProduct(MorphID, MorphID),
+    NonAssociative(MorphID, MorphID, MorphID),
+    EmptyCategory,
+
+    // Only for tensor products:
+    NonDistributiveTensor(MorphID, MorphID, MorphID, MorphID),
+    _Unreachable(PhantomData<T>),
 }

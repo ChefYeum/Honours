@@ -1,5 +1,6 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData};
 use serde::{Deserialize, Serialize};
+use std::fmt::Debug;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub struct MorphID(pub usize);
@@ -27,10 +28,13 @@ pub struct Morphism {
     pub target: ObjID,
 }
 
+#[derive(Debug)]
 pub enum Composition {}
+#[derive(Debug)]
 pub enum TensorProduct {}
 
-pub trait CarleyOp {}
+pub trait CarleyOp: Debug {}
+
 impl CarleyOp for Composition {}
 impl CarleyOp for TensorProduct {}
 #[derive(Serialize, Deserialize, Debug)]
