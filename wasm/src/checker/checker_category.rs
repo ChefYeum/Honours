@@ -1,5 +1,5 @@
 use crate::checker::category::MorphID;
-use crate::checker::category::{Composition, TensorProduct};
+use crate::checker::category::{Composition, TensorProduct, CarleyOp};
 
 use super::{
     errors::CheckerError::{
@@ -10,9 +10,9 @@ use super::{
 
 // TODO: check on the client side that the input is square
 // Returns the number of morphisms
-pub fn check_morph_count(
-    comp_table: &CarleyTable<Composition>,
-) -> Result<(&CarleyTable<Composition>, usize), CheckerError> {
+pub fn check_morph_count<Op: CarleyOp>(
+    comp_table: &CarleyTable<Op>,
+) -> Result<(&CarleyTable<Op>, usize), CheckerError> {
     let n = comp_table.table.len();
 
     if n == 0 {
@@ -29,9 +29,9 @@ pub fn check_morph_count(
 }
 
 // TODO: do they need to be public
-pub fn check_ids(
-    (comp_table, morph_count): (&CarleyTable<Composition>, usize),
-) -> Result<(&CarleyTable<Composition>, usize, Box<[MorphID]>), CheckerError> {
+pub fn check_ids<Op: CarleyOp>(
+    (comp_table, morph_count): (&CarleyTable<Op>, usize),
+) -> Result<(&CarleyTable<Op>, usize, Box<[MorphID]>), CheckerError> {
     let id_morphs = comp_table
         .get_all_morphs()
         .iter()
@@ -62,9 +62,9 @@ pub fn check_ids(
     Ok((comp_table, morph_count, id_morphs))
 }
 
-pub fn check_source_target(
-    (comp_table, morph_count, ids): (&CarleyTable<Composition>, usize, Box<[MorphID]>),
-) -> Result<(&CarleyTable<Composition>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
+pub fn check_source_target<Op: CarleyOp>(
+    (comp_table, morph_count, ids): (&CarleyTable<Op>, usize, Box<[MorphID]>),
+) -> Result<(&CarleyTable<Op>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError> {
     // A vector to map target id to source and target
     let mut links: Vec<Morphism> = Vec::new();
 
@@ -75,7 +75,7 @@ pub fn check_source_target(
         // filter ids to find such g
         let gs: Box<[&MorphID]> = ids
             .iter()
-            .filter(|g| comp_table.get_composition(**g, *f) == Some(*f))
+            .filter(|g| comp_table.get_product(**g, *f) == Some(*f))
             .collect();
 
         assert_eq!(gs.len(), 1);
@@ -85,7 +85,7 @@ pub fn check_source_target(
         // filter ids to find such h
         let hs: Box<[&MorphID]> = ids
             .iter()
-            .filter(|h| comp_table.get_composition(*f, **h) == Some(*f))
+            .filter(|h| comp_table.get_product(*f, **h) == Some(*f))
             .collect();
 
         assert_eq!(hs.len(), 1);

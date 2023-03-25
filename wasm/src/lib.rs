@@ -92,7 +92,7 @@ mod test_bar {
     #[test]
     fn test_dummy_check_ids() {
         // let comp_table: CompositionTable = CompositionTable::new(vec![vec![0, 0], vec![1, 1]]);
-        let comp_table = CarleyTable::new(vec![vec![Some(MorphID(0))]]);
+        let comp_table: CarleyTable<Composition> = CarleyTable::new(vec![vec![Some(MorphID(0))]]);
         let result = check_morph_count(&comp_table)
             .and_then(check_ids)
             // .and_then(check_source_target(_));
