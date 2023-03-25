@@ -7,11 +7,11 @@ mod test_bar {
         io::{self, Read},
     };
 
-    use crate::checker::{
-        checker::{
+    use crate::{
+        checker::category::{CarleyTable, Composition, MorphID},
+        checker::checker_category::{
             check_assoc, check_composition, check_ids, check_morph_count, check_source_target,
         },
-        category::{CarleyTable, MorphID, Composition},
     };
 
     fn read_comp_table(path: &str) -> Result<CarleyTable<Composition>, io::Error> {

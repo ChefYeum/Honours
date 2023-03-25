@@ -3,9 +3,9 @@
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 use gloo_utils::format::JsValueSerdeExt;
 
-use self::{category::{CarleyTable, Composition}, errors::CheckerError, checker::{check_all}};
+use self::{category::{CarleyTable, Composition}, errors::CheckerError, checker_category::{check_all}};
 
-pub mod checker;
+pub mod checker_category;
 pub mod category;
 pub mod errors;
 
