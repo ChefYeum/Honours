@@ -8,7 +8,7 @@ import { nc1, c3 } from '../../cypress/component/exampleModels'
 
 // MUI:
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
+import { styled, ThemeProvider } from '@mui/material/styles';
 import { Button, Fab, Modal, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import init, { check_json_model } from '../../wasm/pkg'
@@ -17,11 +17,7 @@ import TableEditor from './TableEditor'
 // TODO: combine them into one file?
 import Counter from './Counter'
 import { useCounter } from './useCounter'
-
-const Root = styled('div')(({ theme }) => ({
-  height: '100%',
-  backgroundColor: theme.palette.background.default,
-}));
+import { theme } from './theme'
 
 // Import without SSR:
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), {
@@ -85,7 +81,7 @@ const Home: NextPage = () => {
 
 
   return (
-    <Root>
+    <ThemeProvider theme={theme}>
       <Fab
         variant="extended"
         onClick={handleOpen}
@@ -104,10 +100,9 @@ const Home: NextPage = () => {
 
           // Roundness
           borderRadius: '50%',
-        }}>
-        <EditIcon sx={{
-
-        }} />
+        }}
+      >
+        <EditIcon sx={{}} />
       </Fab>
       <ForceGraph3D
         graphData={
@@ -118,18 +113,15 @@ const Home: NextPage = () => {
               id: id
             })),
             links: model.links
-          }
-        }
+          }}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1}
-        linkCurvature={0.25}
-      />
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+        linkCurvature={0.25} /><Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
         <Box
           sx={{
             position: 'absolute' as 'absolute',
@@ -146,12 +138,10 @@ const Home: NextPage = () => {
         >
           <TableEditor n={morphCount} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-
             <Counter
               count={morphCount}
               plus={incrementMorph}
-              minus={decrementMorph}
-            />
+              minus={decrementMorph} />
             <div>
               <Button style={{ marginLeft: 2 }}>Reset</Button>
               <Button style={{ marginLeft: 2 }}>Submit</Button>
@@ -159,8 +149,7 @@ const Home: NextPage = () => {
           </div>
         </Box>
       </Modal>
-
-    </Root>
+    </ThemeProvider>
   );
 }
 
