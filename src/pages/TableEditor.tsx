@@ -1,27 +1,32 @@
 import React from 'react';
 import { Box, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { useTheme, Button } from '@mui/material';
 
-const F = (props: { index: number }) => (
-    <Typography
-        component="span"
-        variant="h6"
-        sx={{
-            fontWeight: 'bold',
-        }}
-    >
-        f
+const F = (props: { index: number }) => {
+    return (
         <Typography
             component="span"
-            variant="subtitle1"
+            variant="h6"
             sx={{
-                verticalAlign: 'sub',
                 fontWeight: 'bold',
             }}
         >
-            {props.index}
+            f
+            <Typography
+                component="span"
+                variant="subtitle1"
+                sx={{
+                    verticalAlign: 'sub',
+                    fontWeight: 'bold',
+                }}
+            >
+                {props.index}
+            </Typography>
         </Typography>
-    </Typography>
-);
+    )
+};
+
+
 
 const cellStyles = {
     borderBottom: '1px solid #ddd',
@@ -34,13 +39,6 @@ const cellStyles = {
     alignItems: 'center',
     textAlign: 'center',
 }
-
-const headerStyles =  {
-    ...cellStyles,
-    borderBottom: '2px solid #ddd',
-    backgroundColor: '#f2f2f2',
-}
-    
 
 
 const TableMorphSelect = (props: React.PropsWithChildren<{ n: number }>) => (
@@ -90,6 +88,14 @@ const TableMorphSelect = (props: React.PropsWithChildren<{ n: number }>) => (
 );
 
 const TableEditor = (props: { n: number }) => {
+    const theme = useTheme();
+
+    const headerStyles = {
+        ...cellStyles,
+        borderBottom: '2px solid #ddd',
+        backgroundColor: theme.palette.primary.main,
+    }
+
     const { n } = props;
     const TableColHead = (props: { rowIndex: number }) => (
         <TableCell sx={headerStyles}>
@@ -113,7 +119,11 @@ const TableEditor = (props: { n: number }) => {
                 {/* Empty cell: */}
                 <TableCell sx={headerStyles} />
                 {[...Array(n)].map((_, index) => (
-                    <TableCell key={index} sx={headerStyles}>
+                    <TableCell key={index} sx={{
+                        ...cellStyles,
+                        borderBottom: '2px solid #ddd',
+                        backgroundColor: theme.palette.primary.main,
+                    }}>
                         <F index={index} />
                     </TableCell>
                 ))}
