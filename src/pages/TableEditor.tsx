@@ -67,7 +67,7 @@ const TableMorphSelect = (props: React.PropsWithChildren<{ n: number }>) => (
                     paddingLeft: 0,
                 },
             }}
-            defaultValue="-"
+            defaultValue={'0'}
             MenuProps={{
                 anchorOrigin: {
                     vertical: 'bottom',

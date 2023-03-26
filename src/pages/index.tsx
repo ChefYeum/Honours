@@ -14,6 +14,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import init, { check_json_model } from '../../wasm/pkg'
 import TableEditor from './TableEditor'
 
+// TODO: combine them into one file?
+import Counter from './Counter'
+import { useCounter } from './useCounter'
+
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
   backgroundColor: theme.palette.background.default,
@@ -38,6 +42,7 @@ function genRandomTree(N = 50) {
 
 const Home: NextPage = () => {
 
+  const [morphCount, incrementMorph, decrementMorph] = useCounter(0);
   const [open, setOpen] = useState(false);
   const [model, _] = useState(c3);
 
@@ -130,14 +135,15 @@ const Home: NextPage = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '80vw',
-          height: '80vh',
+          maxWidth: '90vw',
+          maxHeight: '90vh',
           bgcolor: 'background.paper',
           border: '2px solid #000',
           boxShadow: 24,
           p: 4,
         }}>
-          <TableEditor />
+          <TableEditor n={morphCount} />
+          <Counter count={morphCount} plus={incrementMorph} minus={decrementMorph} />
         </Box>
       </Modal>
     </Root>
