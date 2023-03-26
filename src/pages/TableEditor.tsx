@@ -23,15 +23,28 @@ const F = (props: { index: number }) => (
     </Typography>
 );
 
-const TableMorphSelect = (props: { n: number }) => (
-    <TableCell sx={{
-        borderBottom: '1px solid #ddd',
-        padding: '0',
-        width: '50px',
-        height: '50px',
-        lineHeight: '50px',
-        verticalAlign: 'middle',
-    }}>
+const cellStyles = {
+    borderBottom: '1px solid #ddd',
+    padding: '0',
+    width: '64px',
+    height: '64px',
+    lineHeight: '64px',
+    boxSizing: 'border-box',
+    verticalAlign: 'middle',
+    alignItems: 'center',
+    textAlign: 'center',
+}
+
+const headerStyles =  {
+    ...cellStyles,
+    borderBottom: '2px solid #ddd',
+    backgroundColor: '#f2f2f2',
+}
+    
+
+
+const TableMorphSelect = (props: React.PropsWithChildren<{ n: number }>) => (
+    <TableCell sx={cellStyles}>
         <Select
             sx={{
                 display: 'flex',
@@ -39,22 +52,51 @@ const TableMorphSelect = (props: { n: number }) => (
                 borderRadius: 0,
                 width: '100%',
                 height: '100%',
-                border: 'none'
+                border: 'none',
+                backgroundColor: 'transparent',
+                alignItems: 'center',
+                textAlign: 'center',
+                '& .MuiSelect-icon': {
+                    display: 'none',
+                },
+                '&:focus': {
+                    backgroundColor: 'transparent',
+                },
+                '& .MuiSelect-select.MuiSelect-select': {
+                    paddingRight: 0,
+                    paddingLeft: 0,
+                },
             }}
-            defaultValue={"-"}
+            defaultValue="-"
+            MenuProps={{
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                },
+                transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                },
+                // getContentAnchorEl: null,
+            }}
         >
             {[...Array(props.n)].map((_, index) => (
-                <MenuItem value={index}>{index}</MenuItem>
+                <MenuItem key={index} value={index} sx={{ justifyContent: 'center' }}>
+                    <F index={index} />
+                </MenuItem>
             ))}
         </Select>
     </TableCell>
-)
+);
 
 const TableEditor = (props: { n: number }) => {
     const { n } = props;
-    const TableColHead = (props: { rowIndex: number }) => (<TableCell sx={{ borderBottom: '2px solid #ddd', padding: '10px', backgroundColor: '#f2f2f2' }}>
-        <F index={props.rowIndex} />
-    </TableCell>);
+    const TableColHead = (props: { rowIndex: number }) => (
+        <TableCell sx={headerStyles}>
+            <F index={props.rowIndex} />
+        </TableCell>
+    );
+
 
     const rows = [...Array(n)].map((_, rowIndex) => (
         <TableRow key={rowIndex}>
@@ -69,10 +111,9 @@ const TableEditor = (props: { n: number }) => {
         <TableHead>
             <TableRow>
                 {/* Empty cell: */}
-                <TableCell />
-
+                <TableCell sx={headerStyles} />
                 {[...Array(n)].map((_, index) => (
-                    <TableCell key={index} sx={{ borderBottom: '2px solid #ddd', padding: '10px', backgroundColor: '#f2f2f2' }}>
+                    <TableCell key={index} sx={headerStyles}>
                         <F index={index} />
                     </TableCell>
                 ))}
@@ -98,6 +139,7 @@ const TableEditor = (props: { n: number }) => {
             </Table>
         </Box>
     );
+
 };
 
 export default TableEditor;
