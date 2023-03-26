@@ -9,7 +9,7 @@ import { nc1, c3 } from '../../cypress/component/exampleModels'
 // MUI:
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import { Fab, Modal, Typography } from '@mui/material'
+import { Button, Fab, Modal, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import init, { check_json_model } from '../../wasm/pkg'
 import TableEditor from './TableEditor'
@@ -130,22 +130,36 @@ const Home: NextPage = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{
-          position: 'absolute' as 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '90vw',
-          maxHeight: '90vh',
-          bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
-        }}>
+        <Box
+          sx={{
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
           <TableEditor n={morphCount} />
-          <Counter count={morphCount} plus={incrementMorph} minus={decrementMorph} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+
+            <Counter
+              count={morphCount}
+              plus={incrementMorph}
+              minus={decrementMorph}
+            />
+            <div>
+              <Button style={{ marginLeft: 2 }}>Reset</Button>
+              <Button style={{ marginLeft: 2 }}>Submit</Button>
+            </div>
+          </div>
         </Box>
       </Modal>
+
     </Root>
   );
 }
