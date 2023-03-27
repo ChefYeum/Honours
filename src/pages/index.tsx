@@ -8,8 +8,8 @@ import { nc1, c3 } from '../../cypress/component/exampleModels'
 
 // MUI:
 import Box from '@mui/material/Box';
-import { styled, ThemeProvider, useTheme } from '@mui/material/styles';
-import { Button, Fab, Modal, Typography } from '@mui/material'
+import { styled, ThemeProvider } from '@mui/material/styles';
+import { Button, ButtonGroup, Fab, Modal } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import init, { check_json_model } from '../../wasm/pkg'
 import TableEditor from './TableEditor'
@@ -142,15 +142,18 @@ const Home: NextPage = () => {
           }}
         >
           <TableEditor n={morphCount} />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingTop: '0.5em' }}>
             <Counter
               count={morphCount}
               plus={incrementMorph}
               minus={decrementMorph} />
-            <div>
-              <Button style={{ marginLeft: 2 }}>Reset</Button>
-              <Button style={{ marginLeft: 2 }}>Verify</Button>
-            </div>
+            <ButtonGroup>
+              <Button>Reset</Button>
+              <Button sx={{
+                color: globalTheme.palette.background.default,
+                backgroundColor: globalTheme.palette.primary.main,
+              }}>Verify</Button>
+            </ButtonGroup>
           </div>
         </Box>
       </Modal>

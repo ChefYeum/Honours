@@ -1,48 +1,60 @@
 import { Box, Button, ButtonGroup, useTheme } from "@mui/material";
-import { useState } from "react";
 
-function Counter(
-  props: {count: number, plus: () => void, minus: () => void}
-) {  
+function Counter(props: { count: number; plus: () => void; minus: () => void }) {
   const theme = useTheme();
 
   const { count, plus, minus } = props;
 
-  const buttonWidth = 'calc(100% / 3)';
+  const buttonWidth = "calc(33.33% - 1px)";
 
   return (
-    <div style={{
-      textAlign: 'center',
-      height: '4em',
-      color: theme.palette.primary.main,
-      paddingTop: '0.5em',
-      paddingBottom: '0.5em',
-    }}>
-      <ButtonGroup fullWidth style={{ height: '100%' }}>
+    <div
+      style={{
+        textAlign: "center",
+        color: theme.palette.primary.main,
+        border: ".1px solid",
+        borderRadius: '15px 50px 30px'
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          height: "100%",
+        }}
+      >
         <Button
-          style={{ width: buttonWidth }}
+          sx={{
+            width: buttonWidth,
+            color: theme.palette.primary.main,
+            fontWeight: "bold",
+          }}
           onClick={minus}
         >
           -
         </Button>
         <Box
           component="span"
-          sx={{ width: buttonWidth }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: buttonWidth,
           }}
         >
           {count}
         </Box>
         <Button
-          style={{ width: buttonWidth }}
+          sx={{
+            width: buttonWidth,
+            color: theme.palette.primary.main,
+            fontWeight: "bold",
+          }}
           onClick={plus}
         >
           +
         </Button>
-      </ButtonGroup>
+      </div>
     </div>
   );
 }
