@@ -6,7 +6,6 @@ use super::{
     errors::CheckerError::{self, EmptyCategory, NoValidProduct, NonAssociative, NonSquareTable},
 };
 
-// TODO: check on the client side that the input is square
 // Returns the number of morphisms
 pub fn check_morph_count<Op: CarleyOp>(
     comp_table: &CarleyTable<Op>,

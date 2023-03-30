@@ -1,0 +1,8 @@
+{
+    "table": [
+        [0, null, null, 3],
+        [null, 1, null, 3],
+        [null, null, 2, 3],
+        [3, 3, null, null]
+    ]
+}
