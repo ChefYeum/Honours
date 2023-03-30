@@ -1,32 +1,7 @@
 import React from 'react';
-import { Box, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import { useTheme, Button } from '@mui/material';
-
-const F = (props: { index: number }) => {
-  return (
-    <Typography
-      component="span"
-      variant="h6"
-      sx={{
-        fontWeight: 'bold',
-      }}
-    >
-      f
-      <Typography
-        component="span"
-        variant="subtitle1"
-        sx={{
-          verticalAlign: 'sub',
-          fontWeight: 'bold',
-        }}
-      >
-        {props.index}
-      </Typography>
-    </Typography>
-  )
-};
-
-
+import { Box, MenuItem, Select, styled, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { useTheme, Tab, Tabs } from '@mui/material';
+import { F } from './components/TableMorphLabel';
 
 const cellStyles = {
   borderBottom: '1px solid #ddd',
@@ -65,7 +40,7 @@ const TableMorphSelect = (props: React.PropsWithChildren<{ n: number }>) => (
           paddingLeft: 0,
         },
       }}
-      defaultValue={'0'}
+      defaultValue={'-'}
       MenuProps={{
         anchorOrigin: {
           vertical: 'bottom',
@@ -78,6 +53,9 @@ const TableMorphSelect = (props: React.PropsWithChildren<{ n: number }>) => (
         // getContentAnchorEl: null,
       }}
     >
+      <MenuItem key={'-'} value={'-'} sx={{ justifyContent: 'center' }}>
+        <F index={null} />
+      </MenuItem>
       {[...Array(props.n)].map((_, index) => (
         <MenuItem key={index} value={index} sx={{ justifyContent: 'center' }}>
           <F index={index} />
@@ -131,6 +109,55 @@ const TableEditor = (props: { n: number }) => {
     </TableHead>
   );
 
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+  interface StyledTabsProps {
+    children?: React.ReactNode;
+    value: number;
+    onChange: (event: React.SyntheticEvent, newValue: number) => void;
+  }
+
+  const StyledTabs = styled((props: StyledTabsProps) => (
+    <Tabs
+      {...props}
+      TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
+    />
+  ))({
+    '& .MuiTabs-indicator': {
+      display: 'flex',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+    },
+    '& .MuiTabs-indicatorSpan': {
+      maxWidth: 40,
+      width: '100%',
+      backgroundColor: '#635ee7',
+    },
+  });
+
+  interface StyledTabProps {
+    label: string;
+  }
+
+  const StyledTab = styled((props: StyledTabProps) => (
+    <Tab disabled disableRipple {...props} />
+  ))(({ theme }) => ({
+    textTransform: 'none',
+    fontWeight: theme.typography.fontWeightRegular,
+    fontSize: theme.typography.pxToRem(15),
+    marginRight: theme.spacing(1),
+    color: 'rgba(255, 255, 255, 0.7)',
+    '&.Mui-selected': {
+      color: '#fff',
+    },
+    '&.Mui-focusVisible': {
+      backgroundColor: 'rgba(100, 95, 228, 0.32)',
+    },
+  }));
+
   return (
     <Box
       sx={{
@@ -143,6 +170,14 @@ const TableEditor = (props: { n: number }) => {
         fontFamily: 'Arial, sans-serif',
       }}
     >
+      <StyledTabs
+        value={value}
+        onChange={handleChange}
+        aria-label="styled tabs example"
+      >
+        <StyledTab label="Category" />
+        <StyledTab label="Monoidal" />
+      </StyledTabs>
       <Table>
         <TableColHeadRow />
         <TableBody>{rows}</TableBody>
