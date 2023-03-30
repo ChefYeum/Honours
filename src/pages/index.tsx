@@ -90,12 +90,12 @@ const Home: NextPage = () => {
           position: 'fixed',
 
           // Size
-          width: 96,
-          height: 96,
+          width: 72,
+          height: 72,
 
           top: 'auto',
-          right: 72,
-          bottom: 72,
+          right: 36,
+          bottom: 36,
           left: 'auto',
 
           // Color
