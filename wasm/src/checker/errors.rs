@@ -10,6 +10,6 @@ pub enum CheckerError<T: CarleyOp> {
     EmptyCategory,
 
     // Only for tensor products:
-    NonDistributiveTensor(MorphID, MorphID, MorphID, MorphID),
+    InterchangeFail(MorphID, MorphID, MorphID, MorphID),
     _Unreachable(PhantomData<T>),
 }

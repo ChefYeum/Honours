@@ -186,21 +186,21 @@ pub fn check_interchange_law(
         for g in comp_table.get_all_morphs().iter() {
             for h in comp_table.get_all_morphs().iter() {
                 for k in comp_table.get_all_morphs().iter() {
-                    let h_o_f = comp_table.get_product(*h, *f);
-                    let k_o_g = comp_table.get_product(*k, *g);
+                    let f_o_g = comp_table.get_composition(*f, *g);
+                    let h_o_k= comp_table.get_composition(*h, *k);
 
-                    let k_x_g = tensor_table.get_product(*k, *g);
-                    let h_x_f = tensor_table.get_product(*h, *f);
+                    let f_x_h = tensor_table.get_tensor_product(*f, *h);
+                    let g_x_k = tensor_table.get_tensor_product(*g, *k);
 
-                    if h_o_f.is_none() || k_o_g.is_none() || k_x_g.is_none() || h_x_f.is_none() {
+                    if f_o_g.is_none() || h_o_k.is_none() || f_x_h.is_none() || g_x_k.is_none() {
                         continue;
                     }
 
-                    let lhs = tensor_table.get_product(k_o_g.unwrap(), h_o_f.unwrap());
-                    let rhs = comp_table.get_product(k_x_g.unwrap(), h_x_f.unwrap());
+                    let lhs = tensor_table.get_tensor_product(f_o_g.unwrap(), h_o_k.unwrap());
+                    let rhs = comp_table.get_composition(f_x_h.unwrap(), g_x_k.unwrap());
 
                     if lhs != rhs {
-                        return Err(CheckerError::NonDistributiveTensor(*k, *h, *g, *f));
+                        return Err(CheckerError::InterchangeFail(*k, *h, *g, *f));
                     }
                 }
             }
