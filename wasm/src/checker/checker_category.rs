@@ -172,7 +172,7 @@ pub fn check_assoc<Op: CarleyOp>(
     return Ok((comp_table, morph_count, id, links));
 }
 
-pub fn check_tensor_distrib(
+pub fn check_interchange_law(
     (tensor_table, _, _, _, comp_table): (
         &CarleyTable<TensorProduct>,
         usize,
@@ -228,7 +228,7 @@ pub fn check_monoidal(
         .and_then(check_product)
         .and_then(check_assoc)
         .and_then(|(tensor_table, n, ids, morphs)| {
-            check_tensor_distrib((tensor_table, n, ids, morphs, comp_table))
+            check_interchange_law((tensor_table, n, ids, morphs, comp_table))
         })
         .map(|_| ())
 }
