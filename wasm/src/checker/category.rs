@@ -5,27 +5,19 @@ use std::fmt::Debug;
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub struct MorphID(pub usize);
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
-pub struct ObjID(pub usize);
-
 impl MorphID {
     pub fn id(&self) -> usize {
         self.0
     }
 }
 
-impl ObjID {
-    pub fn id(&self) -> usize {
-        self.0
-    }
-}
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Morphism {
-    // TOOO: make them private with getters
     pub id: MorphID,
-    pub source: ObjID,
-    pub target: ObjID,
+    pub source_id: MorphID,
+    pub target_id: MorphID
+
 }
 
 #[derive(Debug)]

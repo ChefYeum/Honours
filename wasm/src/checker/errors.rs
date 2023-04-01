@@ -10,6 +10,10 @@ pub enum CheckerError<T: CarleyOp> {
     EmptyCategory,
 
     // Only for tensor products:
-    InterchangeFail(MorphID, MorphID, MorphID, MorphID),
+    BifunctorialityInterchangeFail(MorphID, MorphID, MorphID, MorphID),
+    BifunctorialityTensorIDFail(MorphID, MorphID),
+
+    TensorDomainCheckFail(MorphID, MorphID),
+
     _Unreachable(PhantomData<T>),
 }

@@ -2,7 +2,10 @@ use crate::checker::category::MorphID;
 use crate::checker::category::{CarleyOp, Composition, TensorProduct};
 
 use super::{
-    category::{CarleyTable, Morphism, ObjID},
+    category::{
+        CarleyTable,
+        Morphism, 
+    },
     errors::CheckerError::{self, EmptyCategory, NoValidProduct, NonAssociative, NonSquareTable},
 };
 
@@ -60,19 +63,19 @@ pub fn check_ids<Op: CarleyOp>(
 }
 
 pub fn check_source_target<Op: CarleyOp>(
-    (comp_table, morph_count, ids): (&CarleyTable<Op>, usize, Box<[MorphID]>),
+    (carley_table, morph_count, ids): (&CarleyTable<Op>, usize, Box<[MorphID]>),
 ) -> Result<(&CarleyTable<Op>, usize, Box<[MorphID]>, Box<[Morphism]>), CheckerError<Op>> {
     // A vector to map target id to source and target
     let mut links: Vec<Morphism> = Vec::new();
 
     // let mut srcs = vec![None; morph_count]; // Initialize with None values
-    for f in comp_table.get_all_morphs().iter() {
+    for f in carley_table.get_all_morphs().iter() {
         // There must be an id morphsm g such that g o f = f
         // The corresponding object to g is the source of the link
         // filter ids to find such g
         let gs: Box<[&MorphID]> = ids
             .iter()
-            .filter(|g| comp_table.get_product(**g, *f) == Some(*f))
+            .filter(|g| carley_table.get_product(**g, *f) == Some(*f))
             .collect();
 
         assert_eq!(gs.len(), 1);
@@ -82,7 +85,7 @@ pub fn check_source_target<Op: CarleyOp>(
         // filter ids to find such h
         let hs: Box<[&MorphID]> = ids
             .iter()
-            .filter(|h| comp_table.get_product(*f, **h) == Some(*f))
+            .filter(|h| carley_table.get_product(*f, **h) == Some(*f))
             .collect();
 
         assert_eq!(hs.len(), 1);
@@ -93,14 +96,16 @@ pub fn check_source_target<Op: CarleyOp>(
 
         links.push(Morphism {
             id: MorphID(f.id()), // We use the morphism id as the link id
-            source: ObjID(g.id()),
-            target: ObjID(h.id()),
+            // source: ObjID(g.id()),
+            // target: ObjID(h.id()),
+            source_id: MorphID(g.id()),
+            target_id: MorphID(h.id()),
         });
     }
 
     assert_eq!(links.len(), morph_count);
 
-    return Ok((comp_table, morph_count, ids, links.into()));
+    return Ok((carley_table, morph_count, ids, links.into()));
 }
 
 pub fn check_product<Op: CarleyOp>(
@@ -121,7 +126,7 @@ pub fn check_product<Op: CarleyOp>(
         let gs = links
             .iter()
             .enumerate()
-            .filter(|(_, g)| f.target == g.source);
+            .filter(|(_, g)| f.target_id == g.source_id);
 
         for (g_id, _) in gs {
             // Check if the composition f ∘ g exists in the table
@@ -173,13 +178,7 @@ pub fn check_assoc<Op: CarleyOp>(
 }
 
 pub fn check_interchange_law(
-    (tensor_table, _, _, _, comp_table): (
-        &CarleyTable<TensorProduct>,
-        usize,
-        Box<[MorphID]>,
-        Box<[Morphism]>,
-        &CarleyTable<Composition>,
-    ),
+    (tensor_table, comp_table): (&CarleyTable<TensorProduct>, &CarleyTable<Composition>),
 ) -> Result<(), CheckerError<TensorProduct>> {
     // Check that the composition table is associative
     for f in comp_table.get_all_morphs().iter() {
@@ -187,7 +186,7 @@ pub fn check_interchange_law(
             for h in comp_table.get_all_morphs().iter() {
                 for k in comp_table.get_all_morphs().iter() {
                     let f_o_g = comp_table.get_composition(*f, *g);
-                    let h_o_k= comp_table.get_composition(*h, *k);
+                    let h_o_k = comp_table.get_composition(*h, *k);
 
                     let f_x_h = tensor_table.get_tensor_product(*f, *h);
                     let g_x_k = tensor_table.get_tensor_product(*g, *k);
@@ -200,7 +199,7 @@ pub fn check_interchange_law(
                     let rhs = comp_table.get_composition(f_x_h.unwrap(), g_x_k.unwrap());
 
                     if lhs != rhs {
-                        return Err(CheckerError::InterchangeFail(*k, *h, *g, *f));
+                        return Err(CheckerError::BifunctorialityInterchangeFail(*k, *h, *g, *f));
                     }
                 }
             }
@@ -209,26 +208,99 @@ pub fn check_interchange_law(
     Ok(())
 }
 
-pub fn check_category(comp_table: &CarleyTable<Composition>) -> Result<(), CheckerError<Composition>> {
+// Check for id_A x id_B = id_(A x B) which is required for the functoriality
+pub fn check_tensor_identities(
+    (carley_table, morph_count, ids, links): (
+        &CarleyTable<TensorProduct>,
+        usize,
+        Box<[MorphID]>,
+        Box<[Morphism]>,
+    ),
+) -> Result<
+    (
+        &CarleyTable<TensorProduct>,
+        usize,
+        Box<[MorphID]>,
+        Box<[Morphism]>,
+    ),
+    CheckerError<TensorProduct>,
+> {
+    for id_a in ids.iter() {
+        for id_b in ids.iter() {
+            let id_a_x_id_b = carley_table.get_tensor_product(*id_a, *id_b);
+
+            // check if this is a member of ids
+            // let id_ab = ids.iter().find(|id| **id == id_a_x_id_b.unwrap());
+
+            if id_a_x_id_b.is_some() && ids.contains(&id_a_x_id_b.unwrap()) {
+                continue;
+            } else {
+                return Err(CheckerError::BifunctorialityTensorIDFail(*id_a, *id_b));
+            }
+        }
+    }
+    Ok((carley_table, morph_count, ids, links))
+}
+
+pub fn check_category(
+    comp_table: &CarleyTable<Composition>,
+) -> Result<
+    (
+        &CarleyTable<Composition>,
+        usize,
+        Box<[MorphID]>,
+        Box<[Morphism]>,
+    ),
+    CheckerError<Composition>,
+> {
     check_morph_count(comp_table)
         .and_then(check_ids)
         .and_then(check_source_target)
         .and_then(check_product)
         .and_then(check_assoc)
-        .map(|_| ())
 }
 
-pub fn check_monoidal(
-    tensor_table: &CarleyTable<TensorProduct>,
-    comp_table: &CarleyTable<Composition>,
-) -> Result<(), CheckerError<TensorProduct>> {
-    check_morph_count(tensor_table)
-        .and_then(check_ids)
-        .and_then(check_source_target)
-        .and_then(check_product)
-        .and_then(check_assoc)
-        .and_then(|(tensor_table, n, ids, morphs)| {
-            check_interchange_law((tensor_table, n, ids, morphs, comp_table))
-        })
-        .map(|_| ())
+pub fn check_monoidal<'a>(
+    tensor_table: &'a CarleyTable<TensorProduct>,
+    comp_table: &'a CarleyTable<Composition>,
+) -> Result<() , CheckerError<TensorProduct>> {
+            check_morph_count(tensor_table)
+            .and_then(check_ids)
+            .and_then(check_source_target)
+            // Bifunctoriality - Identity of tensor
+            // If you represent identity morphisms as their corresponding objects:
+            // left-right identity of tensor: id_A x id_B = id_(A x B)
+            // which is the identity of some object and that object is A x B
+            .and_then(check_tensor_identities)
+            // // Bifunctoriality - Interchange law
+            // // when both compositions exist: (f o g) x (h o k) = (f x h) o (g x k)
+    
+            // ## Domain & Codomain check
+            // If you represent identity morphisms as their corresponding objects:
+            // id(dom(f x g)) = id(dom(f)) x id(dom(g))
+            // id(cod(f x g)) = id(cod(f)) x id(cod(g))
+            .and_then(|(tensor_table, morph_count, ids, links)| {
+                for f in links.iter() {
+                    for g in links.iter() {
+                        let lhs = tensor_table.get_tensor_product(f.id, g.id);
+                        let rhs = tensor_table.get_tensor_product(f.source_id, g.source_id);
+    
+                        if lhs != rhs {
+                            return Err(CheckerError::TensorDomainCheckFail(f.id, g.id));
+                        }
+    
+                    }
+                }
+                return Ok((tensor_table, morph_count, ids, links));
+    
+            // ## Associativity of tensor
+            // If you represent identity morphisms as their corresponding objects, no need to separately check objects
+            })
+            .and_then(check_assoc)
+            .and_then(
+                |(tensor_table, _, _, _)| {
+                    check_interchange_law((tensor_table, comp_table))
+                }
+            )
+
 }

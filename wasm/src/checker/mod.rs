@@ -17,5 +17,7 @@ fn op_err_to_js_err<Op: CarleyOp>(e: CheckerError<Op> ) -> JsValue {
 #[wasm_bindgen]
 pub fn check_json_model(val: JsValue) -> Result<(), JsValue> {
     let m: CarleyTable<Composition> = val.into_serde().unwrap();
-    check_category(&m).map_err(op_err_to_js_err)
+    check_category(&m)
+        .map(|_| ()) // discard value in res
+        .map_err(op_err_to_js_err)
 }
