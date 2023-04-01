@@ -1,4 +1,4 @@
-mod checker;
+pub mod checker;
 
 #[cfg(test)]
 mod test_bar {
